@@ -3,6 +3,7 @@ use std::path::PathBuf;
 
 use crate::util::{read_file, write_file};
 use crate::Error;
+use stylua_lib::{format_code, Config, OutputVerification};
 
 pub fn format_str(content: String) -> Result<String, Error> {
     let re = Regex::new(
@@ -14,11 +15,12 @@ pub fn format_str(content: String) -> Result<String, Error> {
     )?;
 
     let caps = re.captures(&content).unwrap();
-    let code = "Hello!\n".to_string();
+    let code = caps["code"].to_owned();
+    let new_code = format_code(&code, Config::default(), None, OutputVerification::None).unwrap();
     let new_code_block = format!(
         "{}{}{}",
         caps["before"].to_owned(),
-        code,
+        new_code,
         caps["after"].to_owned()
     );
     let content = re.replace_all(&content, new_code_block);

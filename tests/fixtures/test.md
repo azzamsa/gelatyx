@@ -3,8 +3,8 @@
 first line
 
 ```lua
-print("Hello World!")
-print("Other Hello!")
+local foo=require("bar")
+return {foo}
 ```
 
 second line
