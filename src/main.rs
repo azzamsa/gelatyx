@@ -5,19 +5,18 @@ use std::process;
 
 use gelatyx::app;
 use gelatyx::fmt::format_file;
-use gelatyx::util::is_exist;
 
 fn run() -> Result<()> {
     let matches = app::build().get_matches_from(env::args_os());
 
-    let path: &Path = match matches.value_of("path") {
-        Some(path) => {
-            if is_exist(path) {
-                Path::new(path)
-            } else {
-                bail!("No such file")
-            }
-        }
+    let files: Vec<&Path> = match matches.values_of("file") {
+        Some(files) => files
+            .into_iter()
+            .map(Path::new)
+            // .take_while(|f| f.exists())
+            // Filtering only existing fails can't fails the program if
+            // only one file passed
+            .collect(),
         None => bail!("No file supplied"),
     };
 
@@ -26,7 +25,13 @@ fn run() -> Result<()> {
         None => bail!("No language supplied"),
     };
 
-    format_file(path, lang)?;
+    for file in files {
+        if file.exists() {
+            format_file(file, lang)?;
+        } else {
+            bail!("No such file")
+        }
+    }
 
     Ok(())
 }

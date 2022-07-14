@@ -11,12 +11,14 @@ pub fn build() -> Command<'static> {
                 .help("Language used in code block"),
         )
         .arg(
-            Arg::new("path")
+            Arg::new("file")
                 .required(true)
                 .short('f')
                 .long("file")
                 .takes_value(true)
-                .help("Specify target file"),
+                .multiple_values(true)
+                .empty_values(false)
+                .help("File(s) to format."),
         );
 
     app

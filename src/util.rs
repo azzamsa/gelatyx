@@ -15,8 +15,3 @@ pub fn write_file(path: &Path, content: String) -> Result<(), Error> {
         Err(err) => Err(Error::FileUnwritable(err.to_string())),
     }
 }
-
-pub fn is_exist(path: &str) -> bool {
-    let path = Path::new(path);
-    path.exists()
-}

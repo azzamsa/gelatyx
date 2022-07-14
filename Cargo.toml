@@ -24,7 +24,10 @@ clap = { version = "3.2.10", features = ["suggestions", "cargo"] }
 
 anyhow = "1.0.58"
 thiserror = "1.0.31"
+
 regex = "1.6.0"
+glob = "0.3.0"
+
 stylua = { version = "0.14.0", optional = true }
 
 [dev-dependencies]
