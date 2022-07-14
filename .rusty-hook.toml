@@ -1,5 +1,5 @@
 [hooks]
-pre-commit = "make comply"
+pre-commit = ["make fmt","make lint"]
 pre-push = "make check"
 
 [logging]
