@@ -12,6 +12,15 @@ fn help() {
 }
 
 #[test]
+fn missing_lang() {
+    let mut cmd = Command::cargo_bin("gelatyx").unwrap();
+    cmd.arg("-f").arg("file/doesnt/exist");
+    cmd.assert().failure().stderr(predicate::str::contains(
+        "required arguments were not provided",
+    ));
+}
+
+#[test]
 fn file_not_found() {
     let mut cmd = Command::cargo_bin("gelatyx").unwrap();
     cmd.arg("lua").arg("-f").arg("file/doesnt/exist");
