@@ -35,12 +35,16 @@ pub fn format_lua(content: &str) -> Result<String, Error> {
            ",
     )?;
 
-    let caps = re.captures(content).unwrap();
-    let code = &caps["code"];
-    let new_code = format_code(code, Config::default(), None, OutputVerification::None).unwrap();
-    let new_code_block = format!("{}{}{}", &caps["before"], new_code, &caps["after"]);
-    let content = re.replace_all(content, new_code_block);
-    Ok(content.to_string())
+    match re.captures(content) {
+        Some(caps) => {
+            let code = &caps["code"];
+            let new_code = format_code(code, Config::default(), None, OutputVerification::None)?;
+            let new_code_block = format!("{}{}{}", &caps["before"], new_code, &caps["after"]);
+            let new_content = re.replace_all(content, new_code_block);
+            Ok(new_content.to_string())
+        }
+        None => Ok(content.into()),
+    }
 }
 
 pub fn format_file(filename: &Path, lang: &str) -> Result<(), Error> {

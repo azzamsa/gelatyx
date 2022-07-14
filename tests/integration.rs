@@ -70,3 +70,12 @@ fn format_multiple_file() -> Result<()> {
 
     Ok(())
 }
+#[test]
+fn format_nocode_file() -> Result<()> {
+    let mut cmd = Command::cargo_bin("gelatyx")?;
+    let path = Path::new("tests").join("fixtures").join("nocode.md");
+    cmd.arg("lua").arg("-f").arg(&path);
+    cmd.assert().success();
+
+    Ok(())
+}

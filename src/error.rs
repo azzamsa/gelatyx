@@ -28,3 +28,9 @@ impl std::convert::From<&str> for Error {
         Error::Internal(err.to_string())
     }
 }
+
+impl std::convert::From<stylua_lib::Error> for Error {
+    fn from(err: stylua_lib::Error) -> Self {
+        Error::Internal(err.to_string())
+    }
+}
