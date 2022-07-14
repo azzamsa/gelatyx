@@ -22,3 +22,9 @@ impl std::convert::From<regex::Error> for Error {
         Error::Internal(err.to_string())
     }
 }
+
+impl std::convert::From<&str> for Error {
+    fn from(err: &str) -> Self {
+        Error::Internal(err.to_string())
+    }
+}

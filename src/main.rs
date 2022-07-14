@@ -21,7 +21,12 @@ fn run() -> Result<()> {
         None => bail!("No file supplied"),
     };
 
-    format_file(path)?;
+    let lang = match matches.value_of("lang") {
+        Some(lang) => lang,
+        None => bail!("No language supplied"),
+    };
+
+    format_file(path, lang)?;
 
     Ok(())
 }

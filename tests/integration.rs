@@ -14,7 +14,7 @@ fn help() {
 #[test]
 fn file_not_found() {
     let mut cmd = Command::cargo_bin("gelatyx").unwrap();
-    cmd.arg("-f").arg("file/doesnt/exist");
+    cmd.arg("lua").arg("-f").arg("file/doesnt/exist");
     cmd.assert()
         .failure()
         .stderr(predicate::str::contains("No such file"));
@@ -23,6 +23,6 @@ fn file_not_found() {
 #[test]
 fn format_file() {
     let mut cmd = Command::cargo_bin("gelatyx").unwrap();
-    cmd.arg("-f").arg("tests/fixtures/test.md");
+    cmd.arg("lua").arg("-f").arg("tests/fixtures/test.md");
     cmd.assert().success();
 }
