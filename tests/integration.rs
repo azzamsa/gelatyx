@@ -1,3 +1,5 @@
+use std::path::Path;
+
 use assert_cmd::prelude::*;
 use predicates::prelude::*;
 use std::process::Command;
@@ -14,7 +16,8 @@ fn help() {
 #[test]
 fn missing_lang() {
     let mut cmd = Command::cargo_bin("gelatyx").unwrap();
-    cmd.arg("-f").arg("file/doesnt/exist");
+    let path = Path::new("tests").join("doesnt").join("exist");
+    cmd.arg("-f").arg(path);
     cmd.assert().failure().stderr(predicate::str::contains(
         "required arguments were not provided",
     ));
@@ -23,7 +26,8 @@ fn missing_lang() {
 #[test]
 fn file_not_found() {
     let mut cmd = Command::cargo_bin("gelatyx").unwrap();
-    cmd.arg("lua").arg("-f").arg("file/doesnt/exist");
+    let path = Path::new("tests").join("doesnt").join("exist");
+    cmd.arg("lua").arg("-f").arg(path);
     cmd.assert()
         .failure()
         .stderr(predicate::str::contains("No such file"));
@@ -32,6 +36,7 @@ fn file_not_found() {
 #[test]
 fn format_file() {
     let mut cmd = Command::cargo_bin("gelatyx").unwrap();
-    cmd.arg("lua").arg("-f").arg("tests/fixtures/test.md");
+    let path = Path::new("tests").join("fixtures").join("test.md");
+    cmd.arg("lua").arg("-f").arg(path);
     cmd.assert().success();
 }
