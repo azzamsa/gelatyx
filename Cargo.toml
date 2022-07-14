@@ -21,18 +21,22 @@ default = ["lua"]
 lua = ["dep:stylua"]
 
 [dependencies]
+# cli
 clap = { version = "3.2.12", features = ["suggestions", "cargo"] }
 ansi_term = "0.12.1"
 wild = "2.0.4"
 atty = "0.2.14"
 
+# error
 thiserror = "1.0.31"
 
+# formatter
 regex = "1.6.0"
-
 stylua = { version = "0.14.0", optional = true }
 
+
 [dev-dependencies]
+# test
 assert_cmd = "2.0.4"
 predicates = "2.1.1"
 anyhow = "1.0.58"

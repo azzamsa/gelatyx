@@ -26,7 +26,7 @@ pub fn build(interactive_output: bool) -> Command<'static> {
             Arg::new("LANGUAGE")
                 .required(true)
                 .possible_values(&["lua"])
-                .help("Language used in code block"),
+                .help("Language used in code block."),
         )
         .arg(
             Arg::new("file")
@@ -49,7 +49,12 @@ pub fn build(interactive_output: bool) -> Command<'static> {
                 .long_help(
                     "Specify when to use colored output. The automatic mode \
                      only enables colors if an interactive terminal is detected. \
-                "));
+                "))
+      .arg(
+            Arg::new("check")
+                .long("check")
+                .help("Check if the docs has been formatted."),
+         );
 
     app
 }

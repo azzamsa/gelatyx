@@ -1,13 +1,15 @@
 #[cfg(feature = "lua")]
 pub mod lua;
 
-use std::{path::Path, str::FromStr};
+use std::{fs, str::FromStr};
+
+use ansi_term::Colour::{Blue, Green, Red};
 
 #[cfg(feature = "lua")]
 use crate::fmt::lua::format_lua;
 use crate::{
-    util::{read_file, write_file},
-    Error,
+    config::{Config, Mode},
+    error::Result,
 };
 
 /// Language choices
@@ -19,7 +21,7 @@ pub enum Lang {
 impl FromStr for Lang {
     type Err = &'static str;
 
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
+    fn from_str(s: &str) -> core::result::Result<Self, Self::Err> {
         match s {
             "lua" => Ok(Self::Lua),
             _ => Err("language not supported"),
@@ -27,18 +29,38 @@ impl FromStr for Lang {
     }
 }
 
-pub fn format_file(filename: &Path, lang: &str) -> Result<(), Error> {
-    let content = read_file(filename)?;
+pub fn format_files(config: &Config) -> Result<bool> {
+    let mut no_errors: bool = true;
+    let files = &config.files;
 
-    let lang = Lang::from_str(lang)?;
-    let new_content = match lang {
-        Lang::Lua => format_lua(&content)?,
-    };
+    for file in files {
+        let file_str = format!("{}", file.display());
+        let content = fs::read_to_string(file)?;
 
-    if content != new_content {
-        println!("Formatting...");
-        write_file(filename, new_content)?
+        let lang = Lang::from_str(config.language)?;
+        let new_content = match lang {
+            Lang::Lua => format_lua(&content)?,
+        };
+
+        match config.mode {
+            Mode::Format => {
+                if content != new_content {
+                    println!("Formatting {}", Green.paint(file_str));
+                    fs::write(file, new_content)?;
+                } else {
+                    println!("Skipping {}", Blue.paint(file_str));
+                }
+            }
+            Mode::Check => {
+                if content != new_content {
+                    println!("{} is unformatted", Red.paint(file_str));
+                    no_errors = false;
+                } else {
+                    println!("{} is formatted", Green.paint(file_str));
+                }
+            }
+        }
     }
 
-    Ok(())
+    Ok(no_errors)
 }

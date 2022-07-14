@@ -1,7 +1,7 @@
 use crate::{
     config::Config,
     error::{default_error_handler, Result},
-    fmt::format_file,
+    fmt::format_files,
 };
 
 pub struct Controller<'a> {
@@ -14,15 +14,14 @@ impl<'b> Controller<'b> {
     }
 
     pub fn run(&self) -> Result<bool> {
-        let mut no_errors: bool = true;
-
-        for file in &self.config.files {
-            let result = format_file(file, self.config.language);
-            if let Err(error) = result {
+        let result = format_files(self.config);
+        match result {
+            Ok(true) => Ok(true),
+            Ok(false) => Ok(false),
+            Err(error) => {
                 default_error_handler(&error);
-                no_errors = false;
+                Ok(false)
             }
         }
-        Ok(no_errors)
     }
 }

@@ -2,7 +2,10 @@ use std::path::Path;
 
 use atty::{self, Stream};
 use clap::ArgMatches;
-use gelatyx::{config::Config, error::Result};
+use gelatyx::{
+    config::{Config, Mode},
+    error::Result,
+};
 
 use crate::clap_app;
 
@@ -36,10 +39,15 @@ impl App {
             Some("never") => false,
             _ => self.interactive_output,
         };
+        let mode = match self.matches.is_present("check") {
+            true => Mode::Check,
+            false => Mode::Format,
+        };
         Ok(Config {
             language,
             files,
             colored_output,
+            mode,
         })
     }
 

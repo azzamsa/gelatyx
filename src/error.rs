@@ -1,5 +1,4 @@
-use std::path::PathBuf;
-
+use ansi_term::Colour::Red;
 use thiserror::Error;
 
 pub type Result<T> = std::result::Result<T, Error>;
@@ -12,15 +11,6 @@ pub enum Error {
 
     #[error("{0:?}")]
     Internal(String),
-
-    #[error("No such file {0:?}")]
-    FileNotFound(PathBuf),
-
-    #[error("Failed to read the file {0:?}")]
-    FileUnreadable(String),
-
-    #[error("Failed to write the file {0:?}")]
-    FileUnwritable(String),
 }
 
 impl std::convert::From<regex::Error> for Error {
@@ -47,7 +37,6 @@ pub fn default_error_handler(error: &Error) {
             ::std::process::exit(0);
         }
         _ => {
-            use ansi_term::Colour::Red;
             eprintln!("{}: {}", Red.paint("[gelatyx error]"), error);
         }
     };

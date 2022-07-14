@@ -1,8 +1,7 @@
-use std::{path::Path, process::Command};
+use std::{fs, path::Path, process::Command};
 
 use anyhow::Result;
 use assert_cmd::prelude::*;
-use gelatyx::util::read_file;
 use predicates::prelude::*;
 
 #[test]
@@ -46,7 +45,7 @@ fn format_file() -> Result<()> {
     cmd.arg("lua").arg("-f").arg(&path);
     cmd.assert().success();
 
-    let content = read_file(&path)?;
+    let content = fs::read_to_string(&path)?;
     assert!(content.contains(r#"return { foo }"#));
     Ok(())
 }
@@ -62,8 +61,8 @@ fn format_multiple_file() -> Result<()> {
     cmd.arg("lua").arg("-f").arg(&md1).arg(&md2);
     cmd.assert().success();
 
-    let content1 = read_file(&md1)?;
-    let content2 = read_file(&md2)?;
+    let content1 = fs::read_to_string(&md1)?;
+    let content2 = fs::read_to_string(&md2)?;
     assert!(content1.contains(r#"return { foo }"#));
     assert!(content2.contains(r#"return { foo }"#));
 
