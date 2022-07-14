@@ -1,6 +1,6 @@
+use std::{fs, path::Path};
+
 use crate::Error;
-use std::fs;
-use std::path::Path;
 
 pub fn read_file(path: &Path) -> Result<String, Error> {
     match fs::read_to_string(path) {

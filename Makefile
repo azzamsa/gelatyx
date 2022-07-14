@@ -9,10 +9,10 @@ dev: ## Develop the app.
 	cargo watch -x fmt -x clippy -x run
 
 fmt: ## Format the codebase.
-	cargo fmt
+	cargo +nightly fmt
 
 fmt_check: ## Check is the codebase properly formatted.
-	cargo fmt --check
+	cargo +nightly fmt --check
 
 lint: ## Lint the codebase.
 	cargo clippy

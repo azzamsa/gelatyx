@@ -1,12 +1,10 @@
-use regex::Regex;
-use std::path::Path;
 use std::str::FromStr;
 
-use crate::util::{read_file, write_file};
-use crate::Error;
-
+use regex::Regex;
 #[cfg(feature = "lua")]
 use stylua_lib::{format_code, Config, OutputVerification};
+
+use crate::Error;
 
 /// Language choices
 #[derive(Debug)]
@@ -45,20 +43,4 @@ pub fn format_lua(content: &str) -> Result<String, Error> {
         }
         None => Ok(content.into()),
     }
-}
-
-pub fn format_file(filename: &Path, lang: &str) -> Result<(), Error> {
-    let content = read_file(filename)?;
-
-    let lang = Lang::from_str(lang)?;
-    let new_content = match lang {
-        Lang::Lua => format_lua(&content)?,
-    };
-
-    if content != new_content {
-        println!("Formatting...");
-        write_file(filename, new_content)?
-    }
-
-    Ok(())
 }

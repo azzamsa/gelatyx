@@ -79,5 +79,6 @@ The name Gelatyx is a played version of [Gelatik](https://id.wikipedia.org/wiki/
 
 ## Credits
 
-- Inspired from [Anthony Sottile's blacken-docs](https://github.com/asottile/blacken-docs) 
+- [Anthony Sottile's blacken-docs](https://github.com/asottile/blacken-docs) 
+- [David Peter 's bat](https://github.com/sharkdp/bat) 
 - [Noto Emoji](https://github.com/googlefonts/noto-emoji) 

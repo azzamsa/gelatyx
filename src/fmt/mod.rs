@@ -1,14 +1,14 @@
 #[cfg(feature = "lua")]
 pub mod lua;
 
-use std::path::Path;
-use std::str::FromStr;
-
-use crate::util::{read_file, write_file};
-use crate::Error;
+use std::{path::Path, str::FromStr};
 
 #[cfg(feature = "lua")]
 use crate::fmt::lua::format_lua;
+use crate::{
+    util::{read_file, write_file},
+    Error,
+};
 
 /// Language choices
 #[derive(Debug)]

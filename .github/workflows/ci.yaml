@@ -23,7 +23,8 @@ jobs:
       - name: Install rust toolchain
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
+          # nightly is only use for rustfmt
+          toolchain: nightly
           default: true
           profile: minimal # no documentation
           components: clippy, rustfmt
@@ -32,19 +33,13 @@ jobs:
         uses: Swatinem/rust-cache@v1
 
       - name: Ensure `cargo fmt` has been run
-        uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: -- --check
+        run: make fmt_check
 
       - name: Ensure MSRV is set in `clippy.toml`
         run: grep "^msrv = \"${{ env.MIN_SUPPORTED_RUST_VERSION }}\"\$" clippy.toml
 
       - name: Run clippy
-        uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-          args: --locked --all-targets --all-features
+        run: make lint
 
 
   min_version:
@@ -67,10 +62,7 @@ jobs:
         uses: Swatinem/rust-cache@v1
 
       - name: Run tests
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --locked
+        run: make tests
 
   build:
     name: ${{ matrix.job.os }} (${{ matrix.job.target }})
@@ -94,7 +86,8 @@ jobs:
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
+          # nightly is only use for rustfmt
+          toolchain: nightly
           target: ${{ matrix.job.target }}
           override: true
           profile: minimal

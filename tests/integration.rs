@@ -1,18 +1,17 @@
-use std::path::Path;
+use std::{path::Path, process::Command};
 
 use anyhow::Result;
 use assert_cmd::prelude::*;
 use gelatyx::util::read_file;
 use predicates::prelude::*;
-use std::process::Command;
 
 #[test]
 fn help() -> Result<()> {
     let mut cmd = Command::cargo_bin("gelatyx")?;
     cmd.arg("-h");
-    cmd.assert().success().stdout(predicate::str::contains(
-        "Gelatyx 🦤 Format codebease inside the docs",
-    ));
+    cmd.assert()
+        .success()
+        .stdout(predicate::str::contains("Format codebease inside the docs"));
 
     Ok(())
 }
