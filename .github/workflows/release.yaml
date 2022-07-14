@@ -98,7 +98,7 @@ jobs:
         if: matrix.build == 'linux' || matrix.build == 'linux-musl' || matrix.build == 'macos'
         uses: svenstaro/upload-release-action@v1-release
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          repo_token: ${{ secrets.GH_TOKEN }}
           file: target/${{ matrix.target }}/release/${{ matrix.artifact_name }}
           asset_name: ${{ matrix.asset_name }}
           tag: ${{ github.ref }}
@@ -108,7 +108,7 @@ jobs:
         if: matrix.build == 'win-msvc' || matrix.build == 'win-gnu'
         uses: svenstaro/upload-release-action@v1-release
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          repo_token: ${{ secrets.GH_TOKEN }}
           file: target/release/${{ matrix.artifact_name }}
           asset_name: ${{ matrix.asset_name }}
           tag: ${{ github.ref }}
