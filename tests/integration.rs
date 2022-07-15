@@ -90,3 +90,13 @@ fn check_file() -> Result<()> {
 
     Ok(())
 }
+
+#[test]
+fn one_line_code() -> Result<()> {
+    let mut cmd = Command::cargo_bin(crate_name!())?;
+    let path = Path::new("tests").join("fixtures").join("oneline.md");
+    cmd.arg("lua").arg("-f").arg(&path);
+    cmd.assert().success();
+
+    Ok(())
+}
