@@ -41,7 +41,7 @@ fn file_not_found() -> Result<()> {
 #[test]
 fn format_file() -> Result<()> {
     let mut cmd = Command::cargo_bin("gelatyx")?;
-    let path = Path::new("tests").join("fixtures").join("test.md");
+    let path = Path::new("tests").join("fixtures").join("first.md");
     cmd.arg("lua").arg("-f").arg(&path);
     cmd.assert().success();
 
@@ -54,8 +54,8 @@ fn format_file() -> Result<()> {
 fn format_multiple_file() -> Result<()> {
     let mut cmd = Command::cargo_bin("gelatyx")?;
     let fixture_path = Path::new("tests").join("fixtures");
-    let md1 = fixture_path.join("test.md");
-    let md2 = fixture_path.join("test2.md");
+    let md1 = fixture_path.join("first.md");
+    let md2 = fixture_path.join("second.md");
     // Can't use glob here. It doesn't expand automatically
     // such in termninal invocation.
     cmd.arg("lua").arg("-f").arg(&md1).arg(&md2);
