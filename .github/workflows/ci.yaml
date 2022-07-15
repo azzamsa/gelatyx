@@ -73,9 +73,9 @@ jobs:
         job:
           - { os: ubuntu-20.04, target: x86_64-unknown-linux-gnu    }
           - { os: ubuntu-20.04, target: x86_64-unknown-linux-musl   , use-cross: true }
-          - { os: macos-10.15 , target: x86_64-apple-darwin         }
-          - { os: windows-2019, target: x86_64-pc-windows-gnu       }
-          - { os: windows-2019, target: x86_64-pc-windows-msvc      }
+          - { os: macos-11 , target: x86_64-apple-darwin            }
+          - { os: windows-2022, target: x86_64-pc-windows-gnu       }
+          - { os: windows-2022, target: x86_64-pc-windows-msvc      }
 
     steps:
       - name: Checkout source code
@@ -114,7 +114,7 @@ jobs:
 
       - name: Run tests
         # Test in windows raises some errors
-        if: matrix.job.os != 'windows-2019'
+        if: matrix.job.os != 'windows-2022'
         uses: actions-rs/cargo@v1
         with:
           use-cross: ${{ matrix.job.use-cross }}
