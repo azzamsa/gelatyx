@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use regex::Regex;
+use regex::{Captures, Regex};
 #[cfg(feature = "lua")]
 use stylua_lib::{format_code, Config, OutputVerification};
 
@@ -27,20 +27,19 @@ impl FromStr for Lang {
 pub fn format_lua(content: &str) -> Result<String, Error> {
     let re = Regex::new(
         r"(?xms)
-           (?P<before>```lua\n)
-           (?P<code>.*)
-           (?P<after>```)
+           (?P<before>^```lua\n)
+           (?P<code>.*?)
+           (?P<after>^```$)
            ",
     )?;
 
-    match re.captures(content) {
-        Some(caps) => {
-            let code = &caps["code"];
-            let new_code = format_code(code, Config::default(), None, OutputVerification::None)?;
-            let new_code_block = format!("{}{}{}", &caps["before"], new_code, &caps["after"]);
-            let new_content = re.replace_all(content, new_code_block);
-            Ok(new_content.to_string())
-        }
-        None => Ok(content.into()),
-    }
+    let new_content = re.replace_all(content, |capture: &Captures<'_>| {
+        let code = &capture["code"];
+        let new_code = format_code(code, Config::default(), None, OutputVerification::None)
+            .unwrap_or_else(|_| "".into());
+        let new_code_block = format!("{}{}{}", &capture["before"], new_code, &capture["after"]);
+        new_code_block
+    });
+
+    Ok(new_content.to_string())
 }

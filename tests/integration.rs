@@ -100,3 +100,18 @@ fn one_line_code() -> Result<()> {
 
     Ok(())
 }
+
+#[test]
+fn multiple_code_blocks() -> Result<()> {
+    let mut cmd = Command::cargo_bin(crate_name!())?;
+    let path = Path::new("tests").join("fixtures").join("multi_blocks.md");
+    cmd.arg("lua").arg("-f").arg(&path);
+    cmd.assert().success();
+
+    let content = fs::read_to_string(&path)?;
+    assert!(content.contains(r#"return { first }"#));
+    assert!(content.contains(r#"return { second }"#));
+    assert!(content.contains(r#"return { third }"#));
+
+    Ok(())
+}
