@@ -1,12 +1,12 @@
 use std::{fs, path::Path, process::Command};
 
 use anyhow::Result;
-use assert_cmd::prelude::*;
+use assert_cmd::{crate_name, prelude::*};
 use predicates::prelude::*;
 
 #[test]
 fn help() -> Result<()> {
-    let mut cmd = Command::cargo_bin("gelatyx")?;
+    let mut cmd = Command::cargo_bin(crate_name!())?;
     cmd.arg("-h");
     cmd.assert()
         .success()
@@ -17,7 +17,7 @@ fn help() -> Result<()> {
 
 #[test]
 fn missing_lang() -> Result<()> {
-    let mut cmd = Command::cargo_bin("gelatyx")?;
+    let mut cmd = Command::cargo_bin(crate_name!())?;
     let path = Path::new("tests").join("doesnt").join("exist");
     cmd.arg("-f").arg(path);
     cmd.assert().failure().stderr(predicate::str::contains(
@@ -29,7 +29,7 @@ fn missing_lang() -> Result<()> {
 
 #[test]
 fn file_not_found() -> Result<()> {
-    let mut cmd = Command::cargo_bin("gelatyx")?;
+    let mut cmd = Command::cargo_bin(crate_name!())?;
     let path = Path::new("tests").join("doesnt").join("exist");
     cmd.arg("lua").arg("-f").arg(path);
     cmd.assert()
@@ -40,7 +40,7 @@ fn file_not_found() -> Result<()> {
 
 #[test]
 fn format_file() -> Result<()> {
-    let mut cmd = Command::cargo_bin("gelatyx")?;
+    let mut cmd = Command::cargo_bin(crate_name!())?;
     let path = Path::new("tests").join("fixtures").join("first.md");
     cmd.arg("lua").arg("-f").arg(&path);
     cmd.assert().success();
@@ -52,7 +52,7 @@ fn format_file() -> Result<()> {
 
 #[test]
 fn format_multiple_file() -> Result<()> {
-    let mut cmd = Command::cargo_bin("gelatyx")?;
+    let mut cmd = Command::cargo_bin(crate_name!())?;
     let fixture_path = Path::new("tests").join("fixtures");
     let md1 = fixture_path.join("first.md");
     let md2 = fixture_path.join("second.md");
@@ -70,7 +70,7 @@ fn format_multiple_file() -> Result<()> {
 }
 #[test]
 fn format_nocode_file() -> Result<()> {
-    let mut cmd = Command::cargo_bin("gelatyx")?;
+    let mut cmd = Command::cargo_bin(crate_name!())?;
     let path = Path::new("tests").join("fixtures").join("nocode.md");
     cmd.arg("lua").arg("-f").arg(&path);
     cmd.assert().success();
