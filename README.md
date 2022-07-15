@@ -15,6 +15,8 @@ Format codebase in documentation 🦤
 ## Features
 
 - Format language code block inside documentation files
+- Supported languages
+  - Lua via [StyLua](https://github.com/JohnnyMorganz/StyLua)
 
 ## Usage
 
