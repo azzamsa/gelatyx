@@ -68,12 +68,25 @@ fn format_multiple_file() -> Result<()> {
 
     Ok(())
 }
+
 #[test]
 fn format_nocode_file() -> Result<()> {
     let mut cmd = Command::cargo_bin(crate_name!())?;
     let path = Path::new("tests").join("fixtures").join("nocode.md");
     cmd.arg("lua").arg("-f").arg(&path);
     cmd.assert().success();
+
+    Ok(())
+}
+
+#[test]
+fn check_file() -> Result<()> {
+    let mut cmd = Command::cargo_bin(crate_name!())?;
+    let path = Path::new("tests").join("fixtures").join("check.md");
+    cmd.arg("lua").arg("-f").arg(&path).arg("--check");
+    cmd.assert()
+        .failure()
+        .stderr(predicate::str::contains("is unformatted"));
 
     Ok(())
 }

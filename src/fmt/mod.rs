@@ -53,7 +53,7 @@ pub fn format_files(config: &Config) -> Result<bool> {
             }
             Mode::Check => {
                 if content != new_content {
-                    println!("{} is unformatted", Red.paint(file_str));
+                    eprintln!("{} is unformatted", Red.paint(file_str));
                     no_errors = false;
                 } else {
                     println!("{} is formatted", Green.paint(file_str));
