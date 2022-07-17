@@ -1,5 +1,6 @@
 use std::str::FromStr;
 
+use ansi_term::Colour::Red;
 use regex::{Captures, Regex};
 #[cfg(feature = "lua")]
 use stylua_lib::{format_code, Config, OutputVerification};
@@ -35,9 +36,15 @@ pub fn format_lua(content: &str) -> Result<String, Error> {
 
     let new_content = re.replace_all(content, |capture: &Captures<'_>| {
         let code = &capture["code"];
-        let new_code = format_code(code, Config::default(), None, OutputVerification::None)
-            .unwrap_or_else(|_| "".into());
-        let new_code_block = format!("{}{}{}", &capture["before"], new_code, &capture["after"]);
+        let new_code_or_old = format_code(code, Config::default(), None, OutputVerification::None)
+            .unwrap_or_else(|e| {
+                eprintln!("{}", Red.paint(e.to_string()));
+                code.into()
+            });
+        let new_code_block = format!(
+            "{}{}{}",
+            &capture["before"], new_code_or_old, &capture["after"]
+        );
         new_code_block
     });
 
