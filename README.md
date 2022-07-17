@@ -1,12 +1,25 @@
 <div align="center">
-<h1>Gelatyx</h1>
-<img src='docs/bird.svg' width=80px/>
+  <h1>Gelatyx</h1>
 
-Format codebase in documentation 🦤
+  <img src='docs/bird.svg' width=80px />
 
-<a href="https://github.com/azzamsa/gelatyx/workflows/ci.yml">
+  Format codebase in documentation 🦤
+
+  <a href="https://github.com/azzamsa/gelatyx/workflows/ci.yml">
     <img src="https://github.com/azzamsa/gelatyx/workflows/ci/badge.svg" alt="Build status" />
-</a>
+  </a>
+
+  <a href="https://crates.io/crates/gelatyx">
+    <img src="https://img.shields.io/crates/v/gelatyx.svg">
+  </a>
+
+  <a href=" https://docs.rs/gelatyx/">
+    <img src="https://docs.rs/gelatyx/badge.svg">
+  </a>
+
+  <a href="https://azzamsa.com/support/">
+    <img alt="Sponsor me" src="https://img.shields.io/badge/Sponsor%20Me-%F0%9F%92%96-ff69b4">
+  </a>
 
 </div>
 
@@ -15,6 +28,8 @@ Format codebase in documentation 🦤
 ## Features
 
 - Format language code block inside documentation files
+- Check mode. Ask Gelatyx is the documentation has been formatted.
+- Glob support.
 - Supported languages
   - Lua via [StyLua](https://github.com/JohnnyMorganz/StyLua)
 
@@ -23,25 +38,34 @@ Format codebase in documentation 🦤
 ## Usage Examples
 
 ``` bash
-$ gelatyx lua --file input.md       Format a file with lua formatter
-$ gelatyx lua --file *.md           Format multiple files ...
+$ gelatyx lua --file input.md               Format a file with lua formatter
+$ gelatyx lua --file *.md                   Format multiple files ...
+$ gelatyx lua --file input.md --check       Check if the docs has been formatted.
 ```
 
 ### Command-line options
 
 ``` bash
-Gelatyx 🦤 Format codebease inside the docs
+gelatyx [version] 
+Gelatyx 🦤.
+
+            Format codebease inside the docs
 
 USAGE:
-    gelatyx --file <file>... <lang>
+    gelatyx [OPTIONS] --file <file>... <LANGUAGE>
 
 ARGS:
-    <lang>    Language used in code block [possible values: lua]
+    <LANGUAGE>    Language used in code block. [possible values: lua]
 
 OPTIONS:
     -f, --file <file>...    File(s) to format.
+        --color <color>     When to use colors (*auto*, never, always). [default: auto] [possible
+                            values: auto, never, always]
+        --check             Check if the docs has been formatted.
     -h, --help              Print help information
     -V, --version           Print version information
+
+Note: `gelatyx -h` prints a short and concise overview while `gelatyx --help` gives all details.
 ```
 
 
