@@ -43,3 +43,137 @@ pub fn format_lua(content: &str) -> Result<String, Error> {
 
     Ok(new_content.to_string())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::error::Result;
+
+    #[test]
+    fn compex() -> Result<()> {
+        let input = r#"
+# Document Title
+
+first line
+
+`local foo=require("bar")`
+
+second line
+
+```lua
+local foo=require("bar")
+return {first}
+```
+
+third line
+
+```
+I am text
+```
+
+multiple lines,
+multiple lines.
+
+```python
+return "python"
+```
+
+
+```lua
+return {second}
+```
+
+```lua
+return {third}
+```
+
+empty code block
+
+```lua
+```
+
+```
+```
+
+"#;
+
+        let output = r#"
+# Document Title
+
+first line
+
+`local foo=require("bar")`
+
+second line
+
+```lua
+local foo = require("bar")
+return { first }
+```
+
+third line
+
+```
+I am text
+```
+
+multiple lines,
+multiple lines.
+
+```python
+return "python"
+```
+
+
+```lua
+return { second }
+```
+
+```lua
+return { third }
+```
+
+empty code block
+
+```lua
+```
+
+```
+```
+
+"#;
+
+        assert_eq!(output, format_lua(input)?);
+
+        Ok(())
+    }
+
+    #[test]
+    fn one_line() -> Result<()> {
+        let input = r#"
+
+# Document Title
+
+first line
+
+`local foo=require("bar")`
+
+second line
+"#;
+
+        let output = r#"
+
+# Document Title
+
+first line
+
+`local foo=require("bar")`
+
+second line
+"#;
+
+        assert_eq!(output, format_lua(input)?);
+
+        Ok(())
+    }
+}

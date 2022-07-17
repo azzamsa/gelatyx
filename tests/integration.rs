@@ -39,18 +39,6 @@ fn file_not_found() -> Result<()> {
 }
 
 #[test]
-fn format_file() -> Result<()> {
-    let mut cmd = Command::cargo_bin(crate_name!())?;
-    let path = Path::new("tests").join("fixtures").join("first.md");
-    cmd.arg("lua").arg("-f").arg(&path);
-    cmd.assert().success();
-
-    let content = fs::read_to_string(&path)?;
-    assert!(content.contains(r#"return { foo }"#));
-    Ok(())
-}
-
-#[test]
 fn format_multiple_file() -> Result<()> {
     let mut cmd = Command::cargo_bin(crate_name!())?;
     let fixture_path = Path::new("tests").join("fixtures");
@@ -87,31 +75,6 @@ fn check_file() -> Result<()> {
     cmd.assert()
         .failure()
         .stderr(predicate::str::contains("is unformatted"));
-
-    Ok(())
-}
-
-#[test]
-fn one_line_code() -> Result<()> {
-    let mut cmd = Command::cargo_bin(crate_name!())?;
-    let path = Path::new("tests").join("fixtures").join("oneline.md");
-    cmd.arg("lua").arg("-f").arg(&path);
-    cmd.assert().success();
-
-    Ok(())
-}
-
-#[test]
-fn multiple_code_blocks() -> Result<()> {
-    let mut cmd = Command::cargo_bin(crate_name!())?;
-    let path = Path::new("tests").join("fixtures").join("multi_blocks.md");
-    cmd.arg("lua").arg("-f").arg(&path);
-    cmd.assert().success();
-
-    let content = fs::read_to_string(&path)?;
-    assert!(content.contains(r#"return { first }"#));
-    assert!(content.contains(r#"return { second }"#));
-    assert!(content.contains(r#"return { third }"#));
 
     Ok(())
 }
