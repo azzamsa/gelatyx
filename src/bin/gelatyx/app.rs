@@ -60,15 +60,13 @@ impl App {
     fn files(&self) -> Vec<&Path> {
         match self.matches.values_of("file") {
             Some(files) => {
-                let mut result = Vec::new();
-                for file in files {
-                    if !Path::new(file).exists() {
-                        unreachable!("No such file")
-                    } else {
-                        result.push(Path::new(file))
-                    };
-                }
-                result
+                files
+                    .into_iter()
+                    .map(Path::new)
+                    // .take_while(|f| f.exists())
+                    // Filtering only existing fails can't fails the program if
+                    // only one file passed
+                    .collect()
             }
             None => unreachable!("No file supplied"),
         }

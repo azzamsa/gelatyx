@@ -9,25 +9,30 @@ pub enum Error {
     #[error(transparent)]
     Io(#[from] ::std::io::Error),
 
-    #[error("{0:?}")]
-    Internal(String),
+    #[error("{0}")]
+    Msg(String),
 }
 
 impl std::convert::From<regex::Error> for Error {
     fn from(err: regex::Error) -> Self {
-        Error::Internal(err.to_string())
+        Error::Msg(err.to_string())
     }
 }
 
 impl std::convert::From<&str> for Error {
     fn from(err: &str) -> Self {
-        Error::Internal(err.to_string())
+        Error::Msg(err.to_string())
     }
 }
 
+impl From<String> for Error {
+    fn from(s: String) -> Self {
+        Error::Msg(s)
+    }
+}
 impl std::convert::From<stylua_lib::Error> for Error {
     fn from(error: stylua_lib::Error) -> Self {
-        Error::Internal(format!("stylua: {}", error))
+        Error::Msg(format!("stylua: {}", error))
     }
 }
 

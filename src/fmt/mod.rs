@@ -35,7 +35,8 @@ pub fn format_files(config: &Config) -> Result<bool> {
 
     for file in files {
         let file_str = format!("{}", file.display());
-        let content = fs::read_to_string(file)?;
+        let content =
+            fs::read_to_string(file).map_err(|e| format!("'{}': {}", file.display(), e))?;
 
         let lang = Lang::from_str(config.language)?;
         let new_content = match lang {
