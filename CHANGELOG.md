@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.1.2] - 2022-07-17
+
+### Features
+- Support multiple code block in a file ([dfc2855](dfc28551de5102baccb39d073a0d472e61055366))
+- Check mode ([8b1de34](8b1de34633a374c6475f6f3f8a82b06fb43585ee))
+
+
 ## [0.1.0] - 2022-07-14
 
 ### Features
