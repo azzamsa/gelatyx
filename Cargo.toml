@@ -41,4 +41,4 @@ assert_cmd = "2.0.4"
 predicates = "2.1.1"
 anyhow = "1.0.58"
 
-rusty-hook = "^0.11.2"
+cargo-husky = { version = "1", features = ["user-hooks"] }
