@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.1.3] - 2022-07-17
+
+### Bug fixes
+- Don't change invalid code ([41e4bd4](41e4bd4ced18bd6deae8194ab74f9aa00ab1a701))
+- Display file name on IO error ([120ca53](120ca537f3b8d43fb8bf317622ae87244f3b605e))
+
+
 ## [0.1.2] - 2022-07-17
 
 ### Features
