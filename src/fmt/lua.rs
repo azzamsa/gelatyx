@@ -1,27 +1,10 @@
-use std::{fs, str::FromStr};
+use std::fs;
 
 use ansi_term::Colour::Red;
 use regex::{Captures, Regex};
 use stylua_lib::{format_code, Config as LuaConfig, OutputVerification};
 
 use crate::{config::Config, error, Error};
-
-/// Language choices
-#[derive(Debug)]
-pub enum Lang {
-    Lua,
-}
-
-impl FromStr for Lang {
-    type Err = &'static str;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "lua" => Ok(Self::Lua),
-            _ => Err("language not supported"),
-        }
-    }
-}
 
 pub fn load_config(path: &str) -> error::Result<LuaConfig> {
     let contents = fs::read_to_string(path)?;
