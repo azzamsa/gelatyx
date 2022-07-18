@@ -14,7 +14,7 @@ pub fn load_config(path: &str) -> error::Result<LuaConfig> {
 pub fn format_lua(content: &str, config: &Config) -> Result<String, Error> {
     let re = Regex::new(
         r"(?xms)
-           (?P<before>^```lua\n)
+           (?P<before>^```\s*lua\n)
            (?P<code>.*?)
            (?P<after>^```$)
            ",
@@ -105,6 +105,10 @@ empty code block
 ```
 ```
 
+``` lua
+return {whitespace}
+```
+
 "#;
 
         let output = r#"
@@ -149,6 +153,10 @@ empty code block
 ```
 
 ```
+```
+
+``` lua
+return { whitespace }
 ```
 
 "#;
