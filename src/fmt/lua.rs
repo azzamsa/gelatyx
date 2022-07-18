@@ -49,6 +49,16 @@ mod tests {
     use super::*;
     use crate::{config::Mode, error::Result};
 
+    fn dummy_config() -> Config<'static> {
+        Config {
+            language: "lua",
+            files: [Path::new("")].to_vec(),
+            colored_output: true,
+            mode: Mode::Format,
+            language_config: None,
+        }
+    }
+
     #[test]
     fn compex() -> Result<()> {
         let input = r#"
@@ -142,14 +152,7 @@ empty code block
 ```
 
 "#;
-        let config = Config {
-            language: "lua",
-            files: [Path::new("")].to_vec(),
-            colored_output: true,
-            mode: Mode::Format,
-            language_config: None,
-        };
-
+        let config = dummy_config();
         assert_eq!(output, format_lua(input, &config)?);
 
         Ok(())
@@ -179,13 +182,7 @@ first line
 second line
 "#;
 
-        let config = Config {
-            language: "lua",
-            files: [Path::new("")].to_vec(),
-            colored_output: true,
-            mode: Mode::Format,
-            language_config: None,
-        };
+        let config = dummy_config();
         assert_eq!(output, format_lua(input, &config)?);
 
         Ok(())
