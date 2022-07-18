@@ -30,6 +30,7 @@
 - Format language code block inside documentation files
 - Check mode. Ask Gelatyx is the documentation has been formatted.
 - Glob support.
+- Configure the formatter via configuration file.
 - Supported languages
   - Lua via [StyLua](https://github.com/JohnnyMorganz/StyLua)
 
@@ -38,9 +39,10 @@
 ## Usage Examples
 
 ``` bash
-$ gelatyx lua --file input.md               Format a file with lua formatter
-$ gelatyx lua --file *.md                   Format multiple files ...
-$ gelatyx lua --file input.md --check       Check if the docs has been formatted.
+$ gelatyx lua --file input.md                                 Format a file with lua formatter
+$ gelatyx lua --file *.md                                     Format multiple files ...
+$ gelatyx lua --file input.md --check                         Check if the docs has been formatted.
+$ gelatyx lua --file input.md --language-config config.toml   Configure the formatter.
 ```
 
 ### Command-line options
@@ -62,6 +64,7 @@ OPTIONS:
         --color <color>     When to use colors (*auto*, never, always). [default: auto] [possible
                             values: auto, never, always]
         --check             Check if the docs has been formatted.
+        --language-config <language-config> Specify an alternate configuration file
     -h, --help              Print help information
     -V, --version           Print version information
 

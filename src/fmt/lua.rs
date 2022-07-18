@@ -1,11 +1,10 @@
-use std::str::FromStr;
+use std::{fs, str::FromStr};
 
 use ansi_term::Colour::Red;
 use regex::{Captures, Regex};
-#[cfg(feature = "lua")]
-use stylua_lib::{format_code, Config, OutputVerification};
+use stylua_lib::{format_code, Config as LuaConfig, OutputVerification};
 
-use crate::Error;
+use crate::{config::Config, error, Error};
 
 /// Language choices
 #[derive(Debug)]
@@ -24,8 +23,12 @@ impl FromStr for Lang {
     }
 }
 
-#[cfg(feature = "lua")]
-pub fn format_lua(content: &str) -> Result<String, Error> {
+pub fn load_config(path: &str) -> error::Result<LuaConfig> {
+    let contents = fs::read_to_string(path)?;
+    toml::from_str(&contents).map_err(|_| Error::Msg("Config file not in correct format".into()))
+}
+
+pub fn format_lua(content: &str, config: &Config) -> Result<String, Error> {
     let re = Regex::new(
         r"(?xms)
            (?P<before>^```lua\n)
@@ -34,9 +37,14 @@ pub fn format_lua(content: &str) -> Result<String, Error> {
            ",
     )?;
 
+    let language_config = match config.language_config {
+        Some(config_) => load_config(config_)?,
+        None => LuaConfig::default(),
+    };
+
     let new_content = re.replace_all(content, |capture: &Captures<'_>| {
         let code = &capture["code"];
-        let new_code_or_old = format_code(code, Config::default(), None, OutputVerification::None)
+        let new_code_or_old = format_code(code, language_config, None, OutputVerification::None)
             .unwrap_or_else(|e| {
                 eprintln!("{}", Red.paint(e.to_string()));
                 code.into()
@@ -53,8 +61,10 @@ pub fn format_lua(content: &str) -> Result<String, Error> {
 
 #[cfg(test)]
 mod tests {
+    use std::path::Path;
+
     use super::*;
-    use crate::error::Result;
+    use crate::{config::Mode, error::Result};
 
     #[test]
     fn compex() -> Result<()> {
@@ -149,8 +159,15 @@ empty code block
 ```
 
 "#;
+        let config = Config {
+            language: "lua",
+            files: [Path::new("")].to_vec(),
+            colored_output: true,
+            mode: Mode::Format,
+            language_config: None,
+        };
 
-        assert_eq!(output, format_lua(input)?);
+        assert_eq!(output, format_lua(input, &config)?);
 
         Ok(())
     }
@@ -179,7 +196,14 @@ first line
 second line
 "#;
 
-        assert_eq!(output, format_lua(input)?);
+        let config = Config {
+            language: "lua",
+            files: [Path::new("")].to_vec(),
+            colored_output: true,
+            mode: Mode::Format,
+            language_config: None,
+        };
+        assert_eq!(output, format_lua(input, &config)?);
 
         Ok(())
     }

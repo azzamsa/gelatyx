@@ -19,4 +19,7 @@ pub struct Config<'a> {
 
     /// Format the docs or check only
     pub mode: Mode,
+
+    /// Config file for the formatte
+    pub language_config: Option<&'a str>,
 }

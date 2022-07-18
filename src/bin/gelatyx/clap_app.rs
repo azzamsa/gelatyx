@@ -54,7 +54,13 @@ pub fn build(interactive_output: bool) -> Command<'static> {
             Arg::new("check")
                 .long("check")
                 .help("Check if the docs has been formatted."),
-         );
+         )
+      .arg(
+            Arg::new("language-config")
+                .long("language-config")
+                .takes_value(true)
+                .help("Specify an alternate configuration file"),
+        );
 
     app
 }

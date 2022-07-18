@@ -7,7 +7,10 @@ pub type Result<T> = std::result::Result<T, Error>;
 #[derive(Error, Debug)]
 pub enum Error {
     #[error(transparent)]
-    Io(#[from] ::std::io::Error),
+    Io(#[from] std::io::Error),
+
+    #[error(transparent)]
+    TomlError(#[from] toml::de::Error),
 
     #[error("{0}")]
     Msg(String),
@@ -30,6 +33,7 @@ impl From<String> for Error {
         Error::Msg(s)
     }
 }
+
 impl std::convert::From<stylua_lib::Error> for Error {
     fn from(error: stylua_lib::Error) -> Self {
         Error::Msg(format!("stylua: {}", error))

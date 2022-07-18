@@ -43,11 +43,13 @@ impl App {
             true => Mode::Check,
             false => Mode::Format,
         };
+        let language_config = self.matches.value_of("language-config");
         Ok(Config {
             language,
             files,
             colored_output,
             mode,
+            language_config,
         })
     }
 
