@@ -31,6 +31,7 @@ impl FromStr for Lang {
 
 pub fn format_files(config: &Config) -> Result<bool> {
     let mut no_errors: bool = true;
+    let colored_output = config.colored_output;
     let files = &config.files;
 
     for file in files {
@@ -46,18 +47,46 @@ pub fn format_files(config: &Config) -> Result<bool> {
         match config.mode {
             Mode::Format => {
                 if content != new_content {
-                    println!("Formatting {}", Green.paint(file_str));
+                    println!(
+                        "Formatting {}",
+                        if colored_output {
+                            format!("{}", Green.paint(file_str))
+                        } else {
+                            file_str
+                        }
+                    );
                     fs::write(file, new_content)?;
                 } else {
-                    println!("Skipping {}", Blue.paint(file_str));
+                    println!(
+                        "Skipping {}",
+                        if colored_output {
+                            format!("{}", Blue.paint(file_str))
+                        } else {
+                            file_str
+                        }
+                    );
                 }
             }
             Mode::Check => {
                 if content != new_content {
-                    eprintln!("{} is unformatted", Red.paint(file_str));
+                    eprintln!(
+                        "{} is unformatted",
+                        if colored_output {
+                            format!("{}", Red.paint(file_str))
+                        } else {
+                            file_str
+                        }
+                    );
                     no_errors = false;
                 } else {
-                    println!("{} is formatted", Green.paint(file_str));
+                    println!(
+                        "{} is formatted",
+                        if colored_output {
+                            format!("{}", Green.paint(file_str))
+                        } else {
+                            file_str
+                        }
+                    );
                 }
             }
         }
