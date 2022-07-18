@@ -20,13 +20,13 @@ pub fn build(interactive_output: bool) -> Command<'static> {
         )
         .after_help(
             "Note: `gelatyx -h` prints a short and concise overview while `gelatyx --help` gives all \
-                 details.",
+                 details",
         )
         .arg(
             Arg::new("LANGUAGE")
                 .required(true)
                 .possible_values(&["lua"])
-                .help("Language used in code block."),
+                .help("Language used in code block"),
         )
         .arg(
             Arg::new("file")
@@ -36,7 +36,7 @@ pub fn build(interactive_output: bool) -> Command<'static> {
                 .takes_value(true)
                 .multiple_values(true)
                 .empty_values(false)
-                .help("File(s) to format."),
+                .help("File(s) to format"),
         )
         .arg(
             Arg::with_name("color")
@@ -45,15 +45,15 @@ pub fn build(interactive_output: bool) -> Command<'static> {
                 .takes_value(true)
                 .possible_values(&["auto", "never", "always"])
                 .default_value("auto")
-                .help("When to use colors (*auto*, never, always).")
+                .help("When to use colors (*auto*, never, always)")
                 .long_help(
                     "Specify when to use colored output. The automatic mode \
-                     only enables colors if an interactive terminal is detected. \
+                     only enables colors if an interactive terminal is detected \
                 "))
       .arg(
             Arg::new("check")
                 .long("check")
-                .help("Check if the docs has been formatted."),
+                .help("Check if the docs has been formatted"),
          )
       .arg(
             Arg::new("language-config")
