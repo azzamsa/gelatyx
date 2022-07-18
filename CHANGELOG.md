@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.1.4] - 2022-07-18
+
+### Features
+- Configuration for language formatter ([bc37b30](bc37b300a8aafbdddde66247c503fb49fe19fdbe))
+
+
 ## [0.1.3] - 2022-07-17
 
 ### Bug fixes
