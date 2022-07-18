@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.1.5] - 2022-07-18
+
+### Features
+- Allow whitespace after backtick ([0e3dbfc](0e3dbfc5dbb13c65b93aee86ecacfdcf821aa6df))
+- Respect color option ([d048148](d0481483918bcddb1fd504ee9886fdaccc72b9cf))
+
+
 ## [0.1.4] - 2022-07-18
 
 ### Features
