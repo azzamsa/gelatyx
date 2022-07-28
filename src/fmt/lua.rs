@@ -1,17 +1,53 @@
-use std::fs;
+use std::{fs, path::Path};
 
 use ansi_term::Colour::Red;
+use full_moon::{ast::AstError::UnexpectedToken, Error as FullMoonError};
 use regex::{Captures, Regex};
-use stylua_lib::{format_code, Config as LuaConfig, OutputVerification};
+use stylua_lib::{format_code, Config as LuaConfig, Error::ParseError, OutputVerification};
 
 use crate::{config::Config, error, Error};
-
 pub fn load_config(path: &str) -> error::Result<LuaConfig> {
     let contents = fs::read_to_string(path)?;
     toml::from_str(&contents).map_err(|_| Error::Msg("Config file not in correct format".into()))
 }
+fn handle_error(file: &Path, capture: &str, error: stylua_lib::Error) {
+    let (start_line, end_line) = match &error {
+        ParseError(FullMoonError::AstError(UnexpectedToken {
+            token,
+            additional: _,
+        })) => (
+            Some(token.start_position().line()),
+            Some(token.end_position().line()),
+        ),
+        _ => (None, None),
+    };
 
-pub fn format_lua(content: &str, config: &Config) -> Result<String, Error> {
+    let code_to_print = match (start_line, end_line) {
+        (Some(start), Some(end)) => {
+            let mut lines = Vec::new();
+            // line index starts from 0
+            let start = start - 1;
+            for line in start..=end {
+                lines.push(capture.lines().nth(line));
+            }
+            Some(lines)
+        }
+        (_, _) => None,
+    };
+    eprintln!(
+        "\nFailed to format {}\n{}\n",
+        file.display(),
+        Red.paint(&error.to_string()),
+    );
+    if let Some(code) = code_to_print {
+        for line in code.into_iter().flatten() {
+            println!("{}", line);
+        }
+        println!();
+    };
+}
+
+pub fn format_lua(content: &str, config: &Config, file: &Path) -> Result<String, Error> {
     let re = Regex::new(
         r"(?xms)
            (?P<before>^```\s*lua\n)
@@ -29,7 +65,7 @@ pub fn format_lua(content: &str, config: &Config) -> Result<String, Error> {
         let code = &capture["code"];
         let new_code_or_old = format_code(code, language_config, None, OutputVerification::None)
             .unwrap_or_else(|e| {
-                eprintln!("{}", Red.paint(e.to_string()));
+                handle_error(file, code, e);
                 code.into()
             });
         let new_code_block = format!(

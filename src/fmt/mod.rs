@@ -41,7 +41,7 @@ pub fn format_files(config: &Config) -> Result<bool> {
 
         let lang = Lang::from_str(config.language)?;
         let new_content = match lang {
-            Lang::Lua => format_lua(&content, config)?,
+            Lang::Lua => format_lua(&content, config, file)?,
         };
 
         match config.mode {
