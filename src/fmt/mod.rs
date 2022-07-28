@@ -29,8 +29,13 @@ impl FromStr for Lang {
     }
 }
 
+pub struct FormatCode {
+    content: String,
+    is_parse_failed: bool,
+}
+
 pub fn format_files(config: &Config) -> Result<bool> {
-    let mut no_errors: bool = true;
+    let mut is_errors: bool = false;
     let colored_output = config.colored_output;
     let files = &config.files;
 
@@ -46,7 +51,7 @@ pub fn format_files(config: &Config) -> Result<bool> {
 
         match config.mode {
             Mode::Format => {
-                if content != new_content {
+                if content != new_content.content {
                     println!(
                         "Formatting {}",
                         if colored_output {
@@ -55,7 +60,7 @@ pub fn format_files(config: &Config) -> Result<bool> {
                             file_str
                         }
                     );
-                    fs::write(file, new_content)?;
+                    fs::write(file, new_content.content)?;
                 } else {
                     println!(
                         "Skipping {}",
@@ -68,7 +73,7 @@ pub fn format_files(config: &Config) -> Result<bool> {
                 }
             }
             Mode::Check => {
-                if content != new_content {
+                if content != new_content.content {
                     eprintln!(
                         "{} is unformatted",
                         if colored_output {
@@ -77,7 +82,16 @@ pub fn format_files(config: &Config) -> Result<bool> {
                             file_str
                         }
                     );
-                    no_errors = false;
+                } else if new_content.is_parse_failed {
+                    println!(
+                        "{} is skipped",
+                        if colored_output {
+                            format!("{}", Red.paint(file_str))
+                        } else {
+                            file_str
+                        }
+                    );
+                    is_errors = true;
                 } else {
                     println!(
                         "{} is formatted",
@@ -92,5 +106,5 @@ pub fn format_files(config: &Config) -> Result<bool> {
         }
     }
 
-    Ok(no_errors)
+    Ok(is_errors)
 }

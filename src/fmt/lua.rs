@@ -5,6 +5,7 @@ use full_moon::{ast::AstError::UnexpectedToken, Error as FullMoonError};
 use regex::{Captures, Regex};
 use stylua_lib::{format_code, Config as LuaConfig, Error::ParseError, OutputVerification};
 
+use super::FormatCode;
 use crate::{config::Config, error, Error};
 pub fn load_config(path: &str) -> error::Result<LuaConfig> {
     let contents = fs::read_to_string(path)?;
@@ -47,7 +48,7 @@ fn handle_error(file: &Path, capture: &str, error: stylua_lib::Error) {
     };
 }
 
-pub fn format_lua(content: &str, config: &Config, file: &Path) -> Result<String, Error> {
+pub fn format_lua(content: &str, config: &Config, file: &Path) -> Result<FormatCode, Error> {
     let re = Regex::new(
         r"(?xms)
            (?P<before>^```\s*lua\n)
@@ -56,6 +57,7 @@ pub fn format_lua(content: &str, config: &Config, file: &Path) -> Result<String,
            ",
     )?;
 
+    let mut is_parse_failed = false;
     let language_config = match config.language_config {
         Some(config_) => load_config(config_)?,
         None => LuaConfig::default(),
@@ -66,6 +68,7 @@ pub fn format_lua(content: &str, config: &Config, file: &Path) -> Result<String,
         let new_code_or_old = format_code(code, language_config, None, OutputVerification::None)
             .unwrap_or_else(|e| {
                 handle_error(file, code, e);
+                is_parse_failed = true;
                 code.into()
             });
         let new_code_block = format!(
@@ -75,7 +78,12 @@ pub fn format_lua(content: &str, config: &Config, file: &Path) -> Result<String,
         new_code_block
     });
 
-    Ok(new_content.to_string())
+    let result = FormatCode {
+        content: new_content.to_string(),
+        is_parse_failed,
+    };
+
+    Ok(result)
 }
 
 #[cfg(test)]

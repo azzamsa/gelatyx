@@ -32,10 +32,10 @@ fn main() {
             default_error_handler(&error);
             process::exit(1);
         }
-        Ok(false) => {
+        Ok(true) => {
             process::exit(1);
         }
-        Ok(true) => {
+        Ok(false) => {
             process::exit(0);
         }
     }
