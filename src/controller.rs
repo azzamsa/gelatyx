@@ -16,11 +16,12 @@ impl<'b> Controller<'b> {
     pub fn run(&self) -> Result<bool> {
         let result = format_files(self.config);
         match result {
+            // Ok(is_errors)
             Ok(true) => Ok(true),
             Ok(false) => Ok(false),
             Err(error) => {
                 default_error_handler(&error);
-                Ok(false)
+                Ok(true)
             }
         }
     }

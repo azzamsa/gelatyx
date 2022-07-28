@@ -205,7 +205,8 @@ return { whitespace }
 
 "#;
         let config = dummy_config();
-        assert_eq!(output, format_lua(input, &config)?);
+        let file = Path::new("");
+        assert_eq!(output, format_lua(input, &config, file)?.content);
 
         Ok(())
     }
@@ -235,7 +236,8 @@ second line
 "#;
 
         let config = dummy_config();
-        assert_eq!(output, format_lua(input, &config)?);
+        let file = Path::new("");
+        assert_eq!(output, format_lua(input, &config, file)?.content);
 
         Ok(())
     }

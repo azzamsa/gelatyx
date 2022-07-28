@@ -32,6 +32,7 @@ fn main() {
             default_error_handler(&error);
             process::exit(1);
         }
+        // Ok(is_errors)
         Ok(true) => {
             process::exit(1);
         }

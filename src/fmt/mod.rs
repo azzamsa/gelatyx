@@ -62,6 +62,8 @@ pub fn format_files(config: &Config) -> Result<bool> {
                     );
                     fs::write(file, new_content.content)?;
                 } else {
+                    // Either no code to format or
+                    // the docs already formatted
                     println!(
                         "Skipping {}",
                         if colored_output {
@@ -82,9 +84,10 @@ pub fn format_files(config: &Config) -> Result<bool> {
                             file_str
                         }
                     );
+                    is_errors = true;
                 } else if new_content.is_parse_failed {
                     println!(
-                        "{} is skipped",
+                        "{} is skipped (invalid code)",
                         if colored_output {
                             format!("{}", Red.paint(file_str))
                         } else {
