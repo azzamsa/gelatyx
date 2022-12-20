@@ -13,7 +13,7 @@
     <img src="https://img.shields.io/crates/v/gelatyx.svg">
   </a>
 
-  <a href=" https://docs.rs/gelatyx/">
+  <a href="https://docs.rs/gelatyx/">
     <img src="https://docs.rs/gelatyx/badge.svg">
   </a>
 
