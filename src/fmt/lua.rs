@@ -4,9 +4,9 @@ use ansi_term::Colour::Red;
 use regex::{Captures, Regex};
 use stylua_lib::{format_code, Config as LuaConfig, OutputVerification};
 
-use crate::{config::Config, error, Error};
+use crate::{config::Config, Error};
 
-pub fn load_config(path: &str) -> error::Result<LuaConfig> {
+pub fn load_config(path: &str) -> Result<LuaConfig, Error> {
     let contents = fs::read_to_string(path)?;
     toml::from_str(&contents).map_err(|_| Error::Msg("Config file not in correct format".into()))
 }
@@ -47,7 +47,7 @@ mod tests {
     use std::path::Path;
 
     use super::*;
-    use crate::{config::Mode, error::Result};
+    use crate::config::Mode;
 
     fn dummy_config() -> Config<'static> {
         Config {
@@ -60,7 +60,7 @@ mod tests {
     }
 
     #[test]
-    fn compex() -> Result<()> {
+    fn compex() -> Result<(), Error> {
         let input = r#"
 # Document Title
 
@@ -167,7 +167,7 @@ return { whitespace }
     }
 
     #[test]
-    fn one_line() -> Result<()> {
+    fn one_line() -> Result<(), Error> {
         let input = r#"
 
 # Document Title

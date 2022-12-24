@@ -24,23 +24,22 @@ lua = ["dep:stylua"]
 # cli
 ansi_term = "0.12.1"
 atty = "0.2.14"
-clap = { version = "3.2.12", features = ["suggestions", "cargo"] }
-wild = "2.0.4"
+clap = { version = "3.2", features = ["suggestions", "cargo"] }
+wild = "2.0"
 
 # error
-thiserror = "1.0.31"
+anyhow = "1.0"
+thiserror = "1.0"
 
 # formatter
 stylua = { version = "0.14.0", optional = true }
 
 full_moon = "0.15.1"
-regex = "1.6.0"
+regex = "1.6"
 toml = "0.5.9"
 
 [dev-dependencies]
-# test
-anyhow = "1.0.58"
-assert_cmd = "2.0.4"
-predicates = "2.1.1"
+assert_cmd = "2.0"
+predicates = "2.1"
 
 cargo-husky = { version = "1", features = ["user-hooks"] }

@@ -9,7 +9,7 @@ use ansi_term::Colour::{Blue, Green, Red};
 use crate::fmt::lua::format_lua;
 use crate::{
     config::{Config, Mode},
-    error::Result,
+    Error,
 };
 
 /// Language choices
@@ -29,8 +29,7 @@ impl FromStr for Lang {
     }
 }
 
-pub fn format_files(config: &Config) -> Result<bool> {
-    let mut no_errors: bool = true;
+pub fn format_files(config: &Config) -> Result<(), Error> {
     let colored_output = config.colored_output;
     let files = &config.files;
 
@@ -77,7 +76,6 @@ pub fn format_files(config: &Config) -> Result<bool> {
                             file_str
                         }
                     );
-                    no_errors = false;
                 } else {
                     println!(
                         "{} is formatted",
@@ -92,5 +90,5 @@ pub fn format_files(config: &Config) -> Result<bool> {
         }
     }
 
-    Ok(no_errors)
+    Ok(())
 }

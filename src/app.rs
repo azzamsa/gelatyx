@@ -2,16 +2,22 @@ use std::path::Path;
 
 use atty::{self, Stream};
 use clap::ArgMatches;
-use gelatyx::{
-    config::{Config, Mode},
-    error::Result,
-};
 
-use crate::clap_app;
+use crate::{
+    clap_app,
+    config::{Config, Mode},
+    error::Error,
+};
 
 pub struct App {
     pub matches: ArgMatches,
     interactive_output: bool,
+}
+
+impl Default for App {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl App {
@@ -31,7 +37,7 @@ impl App {
         clap_app::build(interactive_output).get_matches_from(wild::args())
     }
 
-    pub fn config(&self) -> Result<Config> {
+    pub fn config(&self) -> Result<Config, Error> {
         let language = self.language();
         let files = self.files();
         let colored_output = match self.matches.value_of("color") {
