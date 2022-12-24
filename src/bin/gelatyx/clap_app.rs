@@ -25,7 +25,7 @@ pub fn build(interactive_output: bool) -> Command<'static> {
         .arg(
             Arg::new("LANGUAGE")
                 .required(true)
-                .possible_values(&["lua"])
+                .possible_values(["lua"])
                 .help("Language used in code block"),
         )
         .arg(
@@ -43,7 +43,7 @@ pub fn build(interactive_output: bool) -> Command<'static> {
                 .long("color")
                 .overrides_with("color")
                 .takes_value(true)
-                .possible_values(&["auto", "never", "always"])
+                .possible_values(["auto", "never", "always"])
                 .default_value("auto")
                 .help("When to use colors (*auto*, never, always)")
                 .long_help(
