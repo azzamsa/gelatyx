@@ -1,23 +1,23 @@
 <div align="center">
   <h1>Gelatyx</h1>
 
-  <img src='docs/bird.svg' width=80px />
+<img src='docs/bird.svg' width=80px />
 
-  Format codebase in documentation 🦤
+Format codebase in documentation 🦤
 
-  <a href="https://github.com/azzamsa/gelatyx/workflows/ci.yml">
+<a href="https://github.com/azzamsa/gelatyx/workflows/ci.yml">
     <img src="https://github.com/azzamsa/gelatyx/workflows/ci/badge.svg" alt="Build status" />
   </a>
 
-  <a href="https://crates.io/crates/gelatyx">
+<a href="https://crates.io/crates/gelatyx">
     <img src="https://img.shields.io/crates/v/gelatyx.svg">
   </a>
 
-  <a href=" https://docs.rs/gelatyx/">
+<a href=" https://docs.rs/gelatyx/">
     <img src="https://docs.rs/gelatyx/badge.svg">
   </a>
 
-  <a href="https://azzamsa.com/support/">
+<a href="https://azzamsa.com/support/">
     <img alt="Sponsor me" src="https://img.shields.io/badge/Sponsor%20Me-%F0%9F%92%96-ff69b4">
   </a>
 
@@ -38,7 +38,7 @@
 
 ## Usage Examples
 
-``` bash
+```bash
 $ gelatyx lua --file input.md                                 Format a file with lua formatter
 $ gelatyx lua --file *.md                                     Format multiple files ...
 $ gelatyx lua --file input.md --check                         Check if the docs has been formatted.
@@ -47,7 +47,7 @@ $ gelatyx lua --file input.md --language-config config.toml   Configure the form
 
 ### Command-line options
 
-``` bash
+```bash
 gelatyx [version] 
 Gelatyx 🦤.
 
@@ -71,7 +71,6 @@ OPTIONS:
 Note: `gelatyx -h` prints a short and concise overview while `gelatyx --help` gives all details.
 ```
 
-
 If you like `gelatyx` to support your favorite language, feel free to open new issue.
 
 ## Installation
@@ -85,14 +84,13 @@ pre-compiled binaries for GNU/Linux, macOS and Windows.
 
 Using Rust's package manager [cargo](https://github.com/rust-lang/cargo):
 
-``` bash
+```bash
 $ cargo install gelatyx
 ```
 
-
 ## Development
 
-``` bash
+```bash
 $ clone the repository 
 
 $ # Run unit tests and integration tests
@@ -108,6 +106,6 @@ The name Gelatyx is a played version of [Gelatik](https://id.wikipedia.org/wiki/
 
 ## Credits
 
-- [Anthony Sottile's blacken-docs](https://github.com/asottile/blacken-docs) 
-- [David Peter 's bat](https://github.com/sharkdp/bat) 
-- [Noto Emoji](https://github.com/googlefonts/noto-emoji) 
+- [Anthony Sottile's blacken-docs](https://github.com/asottile/blacken-docs)
+- [David Peter 's bat](https://github.com/sharkdp/bat)
+- [Noto Emoji](https://github.com/googlefonts/noto-emoji)
