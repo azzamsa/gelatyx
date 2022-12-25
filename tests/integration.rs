@@ -1,11 +1,10 @@
-use std::{fs, path::Path, process::Command};
+use std::{error::Error, fs, path::Path, process::Command};
 
-use anyhow::Result;
 use assert_cmd::{crate_name, prelude::*};
 use predicates::prelude::*;
 
 #[test]
-fn help() -> Result<()> {
+fn help() -> Result<(), Box<dyn Error>> {
     let mut cmd = Command::cargo_bin(crate_name!())?;
     cmd.arg("-h");
     cmd.assert()
@@ -16,7 +15,7 @@ fn help() -> Result<()> {
 }
 
 #[test]
-fn missing_lang() -> Result<()> {
+fn missing_lang() -> Result<(), Box<dyn Error>> {
     let mut cmd = Command::cargo_bin(crate_name!())?;
     let path = Path::new("tests").join("doesnt").join("exist");
     cmd.arg("-f").arg(path);
@@ -28,18 +27,18 @@ fn missing_lang() -> Result<()> {
 }
 
 #[test]
-fn file_not_found() -> Result<()> {
+fn file_not_found() -> Result<(), Box<dyn Error>> {
     let mut cmd = Command::cargo_bin(crate_name!())?;
     let path = Path::new("tests").join("doesnt").join("exist");
     cmd.arg("lua").arg("-f").arg(path);
     cmd.assert()
         .failure()
-        .stderr(predicate::str::contains("No such file"));
+        .stderr(predicate::str::contains("File is not found"));
     Ok(())
 }
 
 #[test]
-fn format_multiple_file() -> Result<()> {
+fn format_multiple_file() -> Result<(), Box<dyn Error>> {
     let mut cmd = Command::cargo_bin(crate_name!())?;
     let fixture_path = Path::new("tests").join("fixtures");
     let md1 = fixture_path.join("first.md");
@@ -58,7 +57,7 @@ fn format_multiple_file() -> Result<()> {
 }
 
 #[test]
-fn format_nocode_file() -> Result<()> {
+fn format_nocode_file() -> Result<(), Box<dyn Error>> {
     let mut cmd = Command::cargo_bin(crate_name!())?;
     let path = Path::new("tests").join("fixtures").join("nocode.md");
     cmd.arg("lua").arg("-f").arg(&path);
@@ -68,7 +67,7 @@ fn format_nocode_file() -> Result<()> {
 }
 
 #[test]
-fn check_file() -> Result<()> {
+fn check_file() -> Result<(), Box<dyn Error>> {
     let mut cmd = Command::cargo_bin(crate_name!())?;
     let path = Path::new("tests").join("fixtures").join("check.md");
     cmd.arg("lua").arg("-f").arg(&path).arg("--check");

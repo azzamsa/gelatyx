@@ -18,8 +18,9 @@ pub fn format_files(config: &Config, files: Vec<PathBuf>) -> Result<ExitCode, Er
 
     for file in &files {
         let file_str = format!("{}", file.display());
-        let content =
-            fs::read_to_string(file).map_err(|e| format!("'{}': {}", file.display(), e))?;
+        let content = fs::read_to_string(file).map_err(|_| Error::FileNotFound {
+            path: file.to_path_buf(),
+        })?;
 
         let new_content = match config.language {
             Language::Lua => format_lua(&content, config)?,

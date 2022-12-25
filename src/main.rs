@@ -1,9 +1,9 @@
 #![deny(unsafe_code)]
 use std::process;
 
-use anyhow::Result;
 use atty::Stream;
 use clap::Parser;
+use miette::Result;
 
 use gelatyx::{
     cli::{Color, Opts},
@@ -19,7 +19,7 @@ fn main() {
             process::exit(exit_code.into());
         }
         Err(err) => {
-            eprintln!("[gelatyx error]: {:#}", err);
+            eprintln!("Error: {:?}", err);
             process::exit(ExitCode::GeneralError.into());
         }
     }

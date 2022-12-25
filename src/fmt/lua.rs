@@ -7,9 +7,10 @@ use stylua_lib::{format_code, Config as LuaConfig, OutputVerification};
 use crate::{config::Config, Error};
 
 pub fn load_custom_config(path: PathBuf) -> Result<LuaConfig, Error> {
-    let contents = fs::read_to_string(path)?;
-    toml::from_str(&contents)
-        .map_err(|_| Error::Internal("Config file not in correct format".into()))
+    let content = fs::read_to_string(&path).map_err(|_| Error::ConfigNotFound { path })?;
+    toml::from_str(&content).map_err(|e| Error::InvalidConfig {
+        message: e.to_string(),
+    })
 }
 
 pub fn format_lua(content: &str, config: &Config) -> Result<String, Error> {
