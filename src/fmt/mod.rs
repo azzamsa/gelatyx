@@ -1,16 +1,14 @@
-#[cfg(feature = "lua")]
 pub mod lua;
 
 use std::{fs, path::PathBuf};
 
 use ansi_term::Colour::{Blue, Green, Red};
 
-#[cfg(feature = "lua")]
-use crate::fmt::lua::format_lua;
 use crate::{
     cli::Language,
     config::{Config, Mode},
     exit_codes::ExitCode,
+    fmt::lua::format_lua,
     Error,
 };
 
