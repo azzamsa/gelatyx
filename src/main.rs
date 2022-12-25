@@ -2,19 +2,25 @@
 use std::process;
 
 use anyhow::Result;
-use gelatyx::{app::App, fmt};
+use gelatyx::{app::App, exit_codes::ExitCode, fmt};
 
 fn main() {
-    if let Err(err) = run() {
-        eprintln!("Error: {:?}", err);
-        process::exit(1);
+    let result = run();
+    match result {
+        Ok(exit_code) => {
+            process::exit(exit_code.into());
+        }
+        Err(err) => {
+            eprintln!("[gelatyx error]: {:#}", err);
+            process::exit(ExitCode::GeneralError.into());
+        }
     }
 }
 
-fn run() -> Result<()> {
+fn run() -> Result<ExitCode> {
     let app = App::new();
     let config = app.config()?;
-    fmt::format_files(&config)?;
+    let exit_code = fmt::format_files(&config)?;
 
-    Ok(())
+    Ok(exit_code)
 }
