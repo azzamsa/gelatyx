@@ -19,14 +19,10 @@ jobs:
           components: clippy, rustfmt
 
       - name: Install latest just release
-        uses: taiki-e/install-action@v1
-        with:
-          tool: just
+        uses: taiki-e/install-action@just
 
       - name: Install latest dprint release
-        uses: taiki-e/install-action@v1
-        with:
-          tool: dprint
+        uses: taiki-e/install-action@dprint
 
       # - name: Cache
       #   uses: Swatinem/rust-cache@v2
@@ -56,12 +52,10 @@ jobs:
         uses: taiki-e/install-action@nextest
 
       - name: Install latest just release
-        uses: taiki-e/install-action@v1
-        with:
-          tool: just
+        uses: taiki-e/install-action@just
 
-      - name: Cache
-        uses: Swatinem/rust-cache@v2
+      # - name: Cache
+      #   uses: Swatinem/rust-cache@v2
 
       - name: Run tests
         run: just test
