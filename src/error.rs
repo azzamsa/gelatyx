@@ -3,36 +3,33 @@ use thiserror::Error;
 /// all possible errors returned by the app.
 #[derive(Error, Debug)]
 pub enum Error {
-    #[error(transparent)]
-    Io(#[from] std::io::Error),
-
-    #[error(transparent)]
-    TomlError(#[from] toml::de::Error),
+    #[error("{0}")]
+    Internal(String),
 
     #[error("{0}")]
-    Msg(String),
+    InvalidArgument(String),
 }
 
-impl std::convert::From<regex::Error> for Error {
-    fn from(err: regex::Error) -> Self {
-        Error::Msg(err.to_string())
+impl std::convert::From<std::io::Error> for Error {
+    fn from(err: std::io::Error) -> Self {
+        Error::Internal(err.to_string())
     }
 }
 
 impl std::convert::From<&str> for Error {
     fn from(err: &str) -> Self {
-        Error::Msg(err.to_string())
+        Error::Internal(err.to_string())
+    }
+}
+
+impl std::convert::From<regex::Error> for Error {
+    fn from(err: regex::Error) -> Self {
+        Error::Internal(err.to_string())
     }
 }
 
 impl From<String> for Error {
     fn from(s: String) -> Self {
-        Error::Msg(s)
-    }
-}
-
-impl std::convert::From<stylua_lib::Error> for Error {
-    fn from(error: stylua_lib::Error) -> Self {
-        Error::Msg(format!("stylua: {}", error))
+        Error::Internal(s)
     }
 }

@@ -8,7 +8,8 @@ use crate::{config::Config, Error};
 
 pub fn load_config(path: &str) -> Result<LuaConfig, Error> {
     let contents = fs::read_to_string(path)?;
-    toml::from_str(&contents).map_err(|_| Error::Msg("Config file not in correct format".into()))
+    toml::from_str(&contents)
+        .map_err(|_| Error::Internal("Config file not in correct format".into()))
 }
 
 pub fn format_lua(content: &str, config: &Config) -> Result<String, Error> {
