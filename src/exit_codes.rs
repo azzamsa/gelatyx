@@ -2,7 +2,6 @@
 pub enum ExitCode {
     Success,
     GeneralError,
-    KilledBySigint,
 }
 
 impl From<ExitCode> for i32 {
@@ -10,7 +9,6 @@ impl From<ExitCode> for i32 {
         match code {
             ExitCode::Success => 0,
             ExitCode::GeneralError => 1,
-            ExitCode::KilledBySigint => 130,
         }
     }
 }

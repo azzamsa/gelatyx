@@ -17,17 +17,17 @@ lto = true
 panic = 'abort'
 
 [dependencies]
+# formatter
+stylua = { version = "0.14.0" }
+
 # cli
-ansi_term = "0.12.1"
 atty = "0.2.14"
+owo-colors = "3"
 wild = "2.0"
 
 # error
 miette = { version = "5.5", features = ["fancy"] }
 thiserror = "1.0"
-
-# formatter
-stylua = { version = "0.14.0" }
 
 full_moon = "0.15.1"
 regex = "1.6"

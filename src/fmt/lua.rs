@@ -1,10 +1,11 @@
 use std::{fs, path::PathBuf};
 
-use ansi_term::Colour::Red;
 use regex::{Captures, Regex};
 use stylua_lib::{format_code, Config as LuaConfig, OutputVerification};
 
-use crate::{config::Config, Error};
+use crate::{config::Config, exit_codes::ExitCode, Error};
+
+use super::FormatResult;
 
 pub fn load_custom_config(path: PathBuf) -> Result<LuaConfig, Error> {
     let content = fs::read_to_string(&path).map_err(|_| Error::ConfigNotFound { path })?;
@@ -13,7 +14,9 @@ pub fn load_custom_config(path: PathBuf) -> Result<LuaConfig, Error> {
     })
 }
 
-pub fn format_lua(content: &str, config: &Config) -> Result<String, Error> {
+pub fn format_lua(content: &str, config: &Config) -> Result<FormatResult, Error> {
+    let mut exit_code = ExitCode::Success;
+    let mut error = "".to_string();
     let re = Regex::new(
         r"(?xms)
            (?P<before>^```\s*lua\n)
@@ -29,11 +32,16 @@ pub fn format_lua(content: &str, config: &Config) -> Result<String, Error> {
 
     let new_content = re.replace_all(content, |capture: &Captures<'_>| {
         let code = &capture["code"];
-        let new_code_or_old = format_code(code, language_config, None, OutputVerification::None)
-            .unwrap_or_else(|e| {
-                eprintln!("{}", Red.paint(e.to_string()));
-                code.into()
-            });
+        let new_code_or_old: Option<String> =
+            match format_code(code, language_config, None, OutputVerification::None) {
+                Ok(c) => Some(c),
+                Err(e) => {
+                    error = e.to_string();
+                    exit_code = ExitCode::GeneralError;
+                    None
+                }
+            };
+        let new_code_or_old = new_code_or_old.unwrap_or_else(|| code.into());
         let new_code_block = format!(
             "{}{}{}",
             &capture["before"], new_code_or_old, &capture["after"]
@@ -41,7 +49,10 @@ pub fn format_lua(content: &str, config: &Config) -> Result<String, Error> {
         new_code_block
     });
 
-    Ok(new_content.to_string())
+    match exit_code {
+        ExitCode::Success => Ok(FormatResult::Success(new_content.to_string())),
+        ExitCode::GeneralError => Ok(FormatResult::InvalidSyntax(error)),
+    }
 }
 
 #[cfg(test)]
@@ -81,7 +92,6 @@ multiple lines.
 return "python"
 ```
 
-
 ```lua
 return {second}
 ```
@@ -104,7 +114,7 @@ return {whitespace}
 
 "#;
 
-        let output = r#"
+        let expected = r#"
 # Document Title
 
 first line
@@ -131,7 +141,6 @@ multiple lines.
 return "python"
 ```
 
-
 ```lua
 return { second }
 ```
@@ -154,7 +163,10 @@ return { whitespace }
 
 "#;
         let config = dummy_config();
-        assert_eq!(output, format_lua(input, &config)?);
+        let format_result = format_lua(input, &config)?;
+        if let FormatResult::Success(result) = format_result {
+            assert_eq!(expected, result);
+        }
 
         Ok(())
     }
@@ -172,7 +184,7 @@ first line
 second line
 "#;
 
-        let output = r#"
+        let expected = r#"
 
 # Document Title
 
@@ -184,7 +196,10 @@ second line
 "#;
 
         let config = dummy_config();
-        assert_eq!(output, format_lua(input, &config)?);
+        let format_result = format_lua(input, &config)?;
+        if let FormatResult::Success(result) = format_result {
+            assert_eq!(expected, result);
+        }
 
         Ok(())
     }
