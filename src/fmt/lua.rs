@@ -1,4 +1,4 @@
-use std::fs;
+use std::{fs, path::PathBuf};
 
 use ansi_term::Colour::Red;
 use regex::{Captures, Regex};
@@ -6,7 +6,7 @@ use stylua_lib::{format_code, Config as LuaConfig, OutputVerification};
 
 use crate::{config::Config, Error};
 
-pub fn load_config(path: &str) -> Result<LuaConfig, Error> {
+pub fn load_custom_config(path: PathBuf) -> Result<LuaConfig, Error> {
     let contents = fs::read_to_string(path)?;
     toml::from_str(&contents)
         .map_err(|_| Error::Internal("Config file not in correct format".into()))
@@ -21,8 +21,8 @@ pub fn format_lua(content: &str, config: &Config) -> Result<String, Error> {
            ",
     )?;
 
-    let language_config = match config.language_config {
-        Some(config_) => load_config(config_)?,
+    let language_config = match &config.language_config {
+        Some(path) => load_custom_config(path.to_path_buf())?,
         None => LuaConfig::default(),
     };
 
@@ -45,19 +45,10 @@ pub fn format_lua(content: &str, config: &Config) -> Result<String, Error> {
 
 #[cfg(test)]
 mod tests {
-    use std::path::Path;
-
     use super::*;
-    use crate::config::Mode;
 
-    fn dummy_config() -> Config<'static> {
-        Config {
-            language: "lua",
-            files: [Path::new("")].to_vec(),
-            colored_output: true,
-            mode: Mode::Format,
-            language_config: None,
-        }
+    fn dummy_config() -> Config {
+        Config::default()
     }
 
     #[test]

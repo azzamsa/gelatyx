@@ -2,7 +2,15 @@
 use std::process;
 
 use anyhow::Result;
-use gelatyx::{app::App, exit_codes::ExitCode, fmt};
+use atty::Stream;
+use clap::Parser;
+
+use gelatyx::{
+    cli::{Color, Opts},
+    config::{Config, Mode},
+    exit_codes::ExitCode,
+    fmt,
+};
 
 fn main() {
     let result = run();
@@ -18,9 +26,30 @@ fn main() {
 }
 
 fn run() -> Result<ExitCode> {
-    let app = App::new();
-    let config = app.config()?;
-    let exit_code = fmt::format_files(&config)?;
+    let opts = Opts::parse();
+
+    let files = opts.file.clone();
+    let config = construct_config(opts);
+    let exit_code = fmt::format_files(&config, files.to_vec())?;
 
     Ok(exit_code)
+}
+
+fn construct_config(opts: Opts) -> Config {
+    let colored_output = match opts.color {
+        Color::Always => true,
+        Color::Never => false,
+        Color::Auto => atty::is(Stream::Stdout),
+    };
+    let mode = match opts.check {
+        true => Mode::Check,
+        false => Mode::Format,
+    };
+
+    Config {
+        language: opts.language,
+        colored_output,
+        mode,
+        language_config: opts.language_config,
+    }
 }

@@ -1,48 +1,30 @@
 #[cfg(feature = "lua")]
 pub mod lua;
 
-use std::{fs, str::FromStr};
+use std::{fs, path::PathBuf};
 
 use ansi_term::Colour::{Blue, Green, Red};
 
 #[cfg(feature = "lua")]
 use crate::fmt::lua::format_lua;
 use crate::{
+    cli::Language,
     config::{Config, Mode},
     exit_codes::ExitCode,
     Error,
 };
 
-/// Language choices
-#[derive(Debug)]
-pub enum Lang {
-    Lua,
-}
-
-impl FromStr for Lang {
-    type Err = &'static str;
-
-    fn from_str(s: &str) -> core::result::Result<Self, Self::Err> {
-        match s {
-            "lua" => Ok(Self::Lua),
-            _ => Err("language not supported"),
-        }
-    }
-}
-
-pub fn format_files(config: &Config) -> Result<ExitCode, Error> {
+pub fn format_files(config: &Config, files: Vec<PathBuf>) -> Result<ExitCode, Error> {
     let mut exit_code = ExitCode::Success;
     let colored_output = config.colored_output;
-    let files = &config.files;
 
-    for file in files {
+    for file in &files {
         let file_str = format!("{}", file.display());
         let content =
             fs::read_to_string(file).map_err(|e| format!("'{}': {}", file.display(), e))?;
 
-        let lang = Lang::from_str(config.language)?;
-        let new_content = match lang {
-            Lang::Lua => format_lua(&content, config)?,
+        let new_content = match config.language {
+            Language::Lua => format_lua(&content, config)?,
         };
 
         match config.mode {

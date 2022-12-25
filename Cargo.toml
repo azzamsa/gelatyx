@@ -24,7 +24,6 @@ lua = ["dep:stylua"]
 # cli
 ansi_term = "0.12.1"
 atty = "0.2.14"
-clap = { version = "3.2", features = ["suggestions", "cargo"] }
 wild = "2.0"
 
 # error
@@ -37,6 +36,10 @@ stylua = { version = "0.14.0", optional = true }
 full_moon = "0.15.1"
 regex = "1.6"
 toml = "0.5.9"
+
+[dependencies.clap]
+version = "4.0.30"
+features = ["suggestions", "color", "cargo", "derive"]
 
 [dev-dependencies]
 assert_cmd = "2.0"

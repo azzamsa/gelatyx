@@ -1,7 +1,6 @@
 #![deny(unsafe_code)]
 
-pub mod app;
-pub mod clap_app;
+pub mod cli;
 pub mod config;
 pub mod error;
 pub mod exit_codes;
