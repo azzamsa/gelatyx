@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use miette::Diagnostic;
+use miette::{Diagnostic, SourceOffset};
 use thiserror::Error;
 
 /// all possible errors returned by the app.
@@ -32,6 +32,18 @@ pub enum Error {
         help("See the configuration example of your choosen formatter.")
     )]
     InvalidConfig { message: String },
+
+    #[error("{message}")]
+    #[diagnostic(
+        code(gelatyx::invalid_syntax),
+        url(docsrs),
+        help("The file contains invalid syntax.")
+    )]
+    InvalidSyntax {
+        message: String,
+        #[label("This bit here")]
+        bad_bit: SourceOffset,
+    },
 }
 
 impl std::convert::From<std::io::Error> for Error {

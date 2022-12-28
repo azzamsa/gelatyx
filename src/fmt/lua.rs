@@ -3,7 +3,7 @@ use std::{fs, path::PathBuf};
 use regex::{Captures, Regex};
 use stylua_lib::{format_code, Config as LuaConfig, OutputVerification};
 
-use crate::{config::Config, exit_codes::ExitCode, Error};
+use crate::{config::Config, Error};
 
 use super::FormatResult;
 
@@ -15,7 +15,7 @@ pub fn load_custom_config(path: PathBuf) -> Result<LuaConfig, Error> {
 }
 
 pub fn format_lua(content: &str, config: &Config) -> Result<FormatResult, Error> {
-    let mut exit_code = ExitCode::Success;
+    let mut format_result = FormatResult::Unchanged;
     let mut error = "".to_string();
     let re = Regex::new(
         r"(?xms)
@@ -37,7 +37,7 @@ pub fn format_lua(content: &str, config: &Config) -> Result<FormatResult, Error>
                 Ok(c) => Some(c),
                 Err(e) => {
                     error = e.to_string();
-                    exit_code = ExitCode::GeneralError;
+                    format_result = FormatResult::InvalidSyntax(error.clone());
                     None
                 }
             };
@@ -49,10 +49,11 @@ pub fn format_lua(content: &str, config: &Config) -> Result<FormatResult, Error>
         new_code_block
     });
 
-    match exit_code {
-        ExitCode::Success => Ok(FormatResult::Success(new_content.to_string())),
-        ExitCode::GeneralError => Ok(FormatResult::InvalidSyntax(error)),
+    if content != new_content {
+        format_result = FormatResult::Formatted(new_content.to_string())
     }
+
+    Ok(format_result)
 }
 
 #[cfg(test)]
@@ -164,7 +165,7 @@ return { whitespace }
 "#;
         let config = dummy_config();
         let format_result = format_lua(input, &config)?;
-        if let FormatResult::Success(result) = format_result {
+        if let FormatResult::Formatted(result) = format_result {
             assert_eq!(expected, result);
         }
 
@@ -197,7 +198,7 @@ second line
 
         let config = dummy_config();
         let format_result = format_lua(input, &config)?;
-        if let FormatResult::Success(result) = format_result {
+        if let FormatResult::Formatted(result) = format_result {
             assert_eq!(expected, result);
         }
 

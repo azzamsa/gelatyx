@@ -127,7 +127,7 @@ second line
         .arg(input.to_path_buf())
         .arg("--check");
     cmd.assert()
-        .failure()
+        .success()
         .stderr(predicate::str::contains("is unformatted"));
 
     temp_dir.close()?;
