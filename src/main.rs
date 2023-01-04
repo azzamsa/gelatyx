@@ -34,7 +34,7 @@ fn run() -> Result<ExitCode> {
     let files = opts.file.clone();
     let config = construct_config(opts);
     for file in files {
-        match fmt::format_files(&config, &file).context("") {
+        match fmt::format_files(&config, &file).context("Invalid syntax") {
             Ok(status) => {
                 statuses.push(status);
             }

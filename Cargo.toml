@@ -26,10 +26,10 @@ owo-colors = "3"
 wild = "2.0"
 
 # error
+full_moon = "0.15.1"
 miette = { version = "5.5", features = ["fancy"] }
 thiserror = "1.0"
 
-full_moon = "0.15.1"
 regex = "1.6"
 toml = "0.5.9"
 

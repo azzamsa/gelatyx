@@ -5,7 +5,7 @@ use std::io::{self, Write};
 use std::path::Path;
 use std::{fs, path::PathBuf};
 
-use miette::SourceOffset;
+use miette::{NamedSource, SourceOffset};
 use owo_colors::AnsiColors::{Green, Red};
 use owo_colors::{AnsiColors, OwoColorize};
 
@@ -18,9 +18,23 @@ use crate::{
 
 /// The status containing the result of desired formatter
 pub enum FormatResult {
+    /// Contains a formatted content
     Formatted(String),
     Unchanged,
-    InvalidSyntax(String),
+    /// code block , and the error message
+    /// (line, column), code block, error
+    InvalidSyntax(SyntaxError),
+}
+
+pub struct SyntaxError {
+    /// Contains (line, column) pair of the position of the error
+    position: Option<(usize, usize)>,
+    /// Code block where the error occured
+    code_block: String,
+    /// Full error message
+    message: String,
+    /// Short summary of the error message
+    summary: String,
 }
 
 /// Enum helper to count the final status and
@@ -58,12 +72,26 @@ where
                 writeln!(io::stdout(), "{}", msg).ok();
                 fs::write(file_str, formatted_content)?;
             }
-            FormatResult::InvalidSyntax(ref error) => {
+            FormatResult::InvalidSyntax(SyntaxError {
+                position,
+                code_block,
+                message,
+                summary,
+            }) => {
                 let msg = format!("Can't format {}", red_filename).bold().to_string();
                 writeln!(io::stderr(), "{}", msg).ok();
+
+                let bad_bit = if let Some(position) = position {
+                    let (line, col) = position;
+                    Some(SourceOffset::from_location(&code_block, line, col))
+                } else {
+                    None
+                };
                 Err(Error::InvalidSyntax {
-                    message: error.to_string(),
-                    bad_bit: SourceOffset::from_location(unformatted_content, 1, 5),
+                    src: NamedSource::new(file_str, code_block),
+                    bad_bit,
+                    summary,
+                    message,
                 })?;
                 format_status = FormatStatus::Failed;
             }
@@ -87,12 +115,26 @@ where
                 writeln!(io::stdout(), "{}", msg).ok();
                 format_status = FormatStatus::Unchanged;
             }
-            FormatResult::InvalidSyntax(ref error) => {
+            FormatResult::InvalidSyntax(SyntaxError {
+                position,
+                code_block,
+                message,
+                summary,
+            }) => {
                 let msg = format!("Can't check {}", red_filename).bold().to_string();
                 writeln!(io::stderr(), "{}", msg).ok();
+
+                let bad_bit = if let Some(position) = position {
+                    let (line, col) = position;
+                    Some(SourceOffset::from_location(&code_block, line, col))
+                } else {
+                    None
+                };
                 Err(Error::InvalidSyntax {
-                    message: error.to_string(),
-                    bad_bit: SourceOffset::from_location(unformatted_content, 1, 5),
+                    src: NamedSource::new(file_str, code_block),
+                    bad_bit,
+                    summary,
+                    message,
                 })?;
                 format_status = FormatStatus::Failed;
             }

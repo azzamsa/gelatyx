@@ -1,9 +1,10 @@
 use std::{fs, path::PathBuf};
 
+use full_moon::{ast::AstError::UnexpectedToken, Error::AstError};
 use regex::{Captures, Regex};
-use stylua_lib::{format_code, Config as LuaConfig, OutputVerification};
+use stylua_lib::{format_code, Config as LuaConfig, Error::ParseError, OutputVerification};
 
-use crate::{config::Config, Error};
+use crate::{config::Config, fmt::SyntaxError, Error};
 
 use super::FormatResult;
 
@@ -16,7 +17,6 @@ pub fn load_custom_config(path: PathBuf) -> Result<LuaConfig, Error> {
 
 pub fn format_lua(content: &str, config: &Config) -> Result<FormatResult, Error> {
     let mut format_result = FormatResult::Unchanged;
-    let mut error = "".to_string();
     let re = Regex::new(
         r"(?xms)
            (?P<before>^```\s*lua\n)
@@ -35,9 +35,8 @@ pub fn format_lua(content: &str, config: &Config) -> Result<FormatResult, Error>
         let new_code_or_old: Option<String> =
             match format_code(code, language_config, None, OutputVerification::None) {
                 Ok(c) => Some(c),
-                Err(e) => {
-                    error = e.to_string();
-                    format_result = FormatResult::InvalidSyntax(error.clone());
+                Err(error) => {
+                    format_result = parse_error(code, error);
                     None
                 }
             };
@@ -54,6 +53,34 @@ pub fn format_lua(content: &str, config: &Config) -> Result<FormatResult, Error>
     }
 
     Ok(format_result)
+}
+
+fn parse_error(code_block: &str, error: stylua_lib::Error) -> FormatResult {
+    // It has different format than other error library
+    // instead of emitting line and column. It uses two more
+    // detailed position
+    let (position, summary) = match &error {
+        ParseError(AstError(UnexpectedToken { token, additional })) => {
+            let position = (
+                token.start_position().line(),
+                token.end_position().character(),
+            );
+            (Some(position), additional.to_owned())
+        }
+        _ => (None, None),
+    };
+    let summary = if let Some(summary) = summary {
+        summary.to_string()
+    } else {
+        "here".to_string()
+    };
+    let syntax_error = SyntaxError {
+        position,
+        code_block: code_block.to_string(),
+        message: error.to_string(),
+        summary,
+    };
+    FormatResult::InvalidSyntax(syntax_error)
 }
 
 #[cfg(test)]
