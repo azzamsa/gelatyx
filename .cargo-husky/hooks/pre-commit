@@ -1,2 +1,2 @@
-make fmt
-make lint
+just fmt
+just lint
