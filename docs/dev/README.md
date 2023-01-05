@@ -1,4 +1,4 @@
-## Contributing
+## Development Guide
 
 ### Commit Message Format
 
