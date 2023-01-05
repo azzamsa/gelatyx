@@ -57,20 +57,8 @@ impl std::convert::From<std::io::Error> for Error {
     }
 }
 
-impl std::convert::From<&str> for Error {
-    fn from(err: &str) -> Self {
-        Error::Internal(err.to_string())
-    }
-}
-
 impl std::convert::From<regex::Error> for Error {
     fn from(err: regex::Error) -> Self {
         Error::Internal(err.to_string())
-    }
-}
-
-impl From<String> for Error {
-    fn from(s: String) -> Self {
-        Error::Internal(s)
     }
 }
