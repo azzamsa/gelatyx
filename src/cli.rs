@@ -10,13 +10,12 @@ use clap::{Parser, ValueEnum};
     after_long_help = "Bugs can be reported on GitHub: https://github.com/azzamsa/gelatyx/issues"
 )]
 pub struct Opts {
-    /// Language used in code block
-    #[arg(value_enum)]
-    pub language: Language,
-
     /// File(s) to format
-    #[arg(short, long, num_args = 1..)]
     pub file: Vec<PathBuf>,
+
+    /// Language used in code block
+    #[arg(short, long, value_enum)]
+    pub language: Language,
 
     /// Specify an alternate configuration file
     #[arg(long)]

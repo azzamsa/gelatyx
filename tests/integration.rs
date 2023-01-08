@@ -19,7 +19,7 @@ fn help() -> Result<(), Box<dyn Error>> {
 fn missing_lang() -> Result<(), Box<dyn Error>> {
     let mut cmd = Command::cargo_bin(crate_name!())?;
     let path = Path::new("tests").join("doesnt").join("exist");
-    cmd.arg("-f").arg(path);
+    cmd.arg(path);
     cmd.assert().failure().stderr(predicate::str::contains(
         "required arguments were not provided",
     ));
@@ -31,7 +31,7 @@ fn missing_lang() -> Result<(), Box<dyn Error>> {
 fn file_not_found() -> Result<(), Box<dyn Error>> {
     let mut cmd = Command::cargo_bin(crate_name!())?;
     let path = Path::new("tests").join("doesnt").join("exist");
-    cmd.arg("lua").arg("-f").arg(path);
+    cmd.arg(path).arg("--language").arg("lua");
     cmd.assert()
         .failure()
         .stderr(predicate::str::contains("File is not found"))
@@ -65,10 +65,10 @@ second line
 
     // Can't use glob here. It doesn't expand automatically
     // such in termninal invocation.
-    cmd.arg("lua")
-        .arg("-f")
-        .arg(md1.to_path_buf())
-        .arg(md2.to_path_buf());
+    cmd.arg(md1.to_path_buf())
+        .arg(md2.to_path_buf())
+        .arg("--language")
+        .arg("lua");
     cmd.assert()
         .success()
         .stdout(predicate::str::contains("2 files formatted"));
@@ -98,7 +98,7 @@ second line
     let input = temp_dir.child("nocode.md");
     input.write_str(content)?;
 
-    cmd.arg("lua").arg("-f").arg(input.to_path_buf());
+    cmd.arg(input.to_path_buf()).arg("--language").arg("lua");
     cmd.assert()
         .success()
         .stdout(predicate::str::contains("1 file unchanged"));
@@ -128,9 +128,9 @@ second line
     let input = temp_dir.child("check.md");
     input.write_str(content)?;
 
-    cmd.arg("lua")
-        .arg("-f")
-        .arg(input.to_path_buf())
+    cmd.arg(input.to_path_buf())
+        .arg("--language")
+        .arg("lua")
         .arg("--check");
     cmd.assert()
         .success()
