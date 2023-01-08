@@ -34,7 +34,9 @@ fn file_not_found() -> Result<(), Box<dyn Error>> {
     cmd.arg("lua").arg("-f").arg(path);
     cmd.assert()
         .failure()
-        .stderr(predicate::str::contains("File is not found"));
+        .stderr(predicate::str::contains("File is not found"))
+        .stderr(predicate::str::contains("1 file failed to format"));
+
     Ok(())
 }
 
@@ -47,7 +49,7 @@ first line
 
 ```lua
 local foo = require("bar")
-return { foo }
+return{foo}
 ```
 
 second line
@@ -67,7 +69,9 @@ second line
         .arg("-f")
         .arg(md1.to_path_buf())
         .arg(md2.to_path_buf());
-    cmd.assert().success();
+    cmd.assert()
+        .success()
+        .stdout(predicate::str::contains("2 files formatted"));
 
     let content1 = fs::read_to_string(md1)?;
     assert!(content1.contains(r#"return { foo }"#));
@@ -95,7 +99,9 @@ second line
     input.write_str(content)?;
 
     cmd.arg("lua").arg("-f").arg(input.to_path_buf());
-    cmd.assert().success();
+    cmd.assert()
+        .success()
+        .stdout(predicate::str::contains("1 file unchanged"));
 
     temp_dir.close()?;
     Ok(())
@@ -128,7 +134,8 @@ second line
         .arg("--check");
     cmd.assert()
         .success()
-        .stderr(predicate::str::contains("is unformatted"));
+        .stderr(predicate::str::contains("is unformatted"))
+        .stdout(predicate::str::contains("1 file would be formatted"));
 
     temp_dir.close()?;
     Ok(())
