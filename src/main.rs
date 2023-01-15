@@ -31,8 +31,9 @@ fn run() -> Result<ExitCode> {
     let mut statuses: Vec<FormatStatus> = Vec::new();
     let opts = Opts::parse();
 
-    let files = opts.file.clone();
+    let files = opts.files()?;
     let config = construct_config(opts);
+
     for file in files {
         match fmt::format_files(&config, &file).context("Invalid syntax") {
             Ok(status) => {

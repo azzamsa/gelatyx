@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::{fs, path::PathBuf};
 
 use clap::{Parser, ValueEnum};
 
@@ -12,6 +12,10 @@ use clap::{Parser, ValueEnum};
 pub struct Opts {
     /// File(s) to format
     pub file: Vec<PathBuf>,
+
+    /// Specify a file containings file(s) to format
+    #[arg(long, conflicts_with("file"))]
+    pub file_list: Option<PathBuf>,
 
     /// Language used in code block
     #[arg(short, long, value_enum)]
@@ -35,6 +39,19 @@ pub struct Opts {
         long_help,
     )]
     pub color: Color,
+}
+
+impl Opts {
+    pub fn files(&self) -> miette::Result<Vec<PathBuf>> {
+        let files = match &self.file_list {
+            Some(file_list) => {
+                let content = fs::read_to_string(file_list).unwrap();
+                content.lines().map(PathBuf::from).collect::<Vec<PathBuf>>()
+            }
+            None => self.file.to_owned(),
+        };
+        Ok(files)
+    }
 }
 
 #[derive(Debug, Clone, ValueEnum)]

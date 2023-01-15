@@ -145,3 +145,45 @@ second line
     temp_dir.close()?;
     Ok(())
 }
+
+#[test]
+fn format_from_list_file() -> Result<(), Box<dyn Error>> {
+    let content = r#"""
+```lua
+local foo = require("bar")
+return {foo}
+```
+"""#;
+
+    let mut cmd = Command::cargo_bin(crate_name!())?;
+
+    let temp_dir = assert_fs::TempDir::new()?;
+    let md1 = temp_dir.child("first.md");
+    md1.write_str(content)?;
+    let md2 = temp_dir.child("second.md");
+    md2.write_str(content)?;
+
+    let file_list = temp_dir.child("list.txt");
+    file_list.write_str(&format!(
+        "{}\n{}",
+        md1.to_path_buf().display(),
+        md2.to_path_buf().display()
+    ))?;
+
+    cmd.arg("--file-list")
+        .arg(file_list.to_path_buf())
+        .arg("--language")
+        .arg("lua");
+    cmd.assert()
+        .success()
+        .stdout(predicate::str::contains("2 files formatted"))
+        .code(0);
+
+    let content1 = fs::read_to_string(md1)?;
+    assert!(content1.contains(r#"return { foo }"#));
+    let content2 = fs::read_to_string(md2)?;
+    assert!(content2.contains(r#"return { foo }"#));
+
+    temp_dir.close()?;
+    Ok(())
+}
