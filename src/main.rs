@@ -85,53 +85,70 @@ fn print_summary(
     failed: usize,
     mode: Mode,
 ) -> Result<ExitCode> {
-    let file_or_files = |usize| -> &str {
-        if usize <= 1 {
+    let file_or_files = |file_count: usize| -> &str {
+        if file_count <= 1 {
             "file"
         } else {
             "files"
         }
     };
-    let message = match mode {
+
+    let failed_summary = |message: &str| -> Result<ExitCode> {
+        let summary = format!("\nOh no! 💥 💔 💥\n{}", message).bold().to_string();
+        writeln!(io::stderr(), "{}", &summary).ok();
+        Ok(ExitCode::GeneralError)
+    };
+    let success_summary = |message: &str| -> Result<ExitCode> {
+        let summary = format!("\nAll done! ✨ 🍰 ✨\n{}", message)
+            .bold()
+            .to_string();
+        writeln!(io::stdout(), "{}", &summary).ok();
+        Ok(ExitCode::Success)
+    };
+
+    match mode {
         Mode::Format => {
-            let formatted = format!("{} {} formatted", formatted, file_or_files(formatted))
+            let is_formatted = format!("{} {} formatted", formatted, file_or_files(formatted))
                 .green()
                 .to_string();
-            let unchanged = format!("{} {} unchanged", unchanged, file_or_files(unchanged));
-            let failed = format!("{} {} failed to format", failed, file_or_files(failed))
+            let is_unchanged = format!("{} {} unchanged", unchanged, file_or_files(unchanged));
+            let is_failed = format!("{} {} failed to format", failed, file_or_files(failed))
                 .red()
                 .to_string();
-            format!("{}. {}. {}", formatted, unchanged, failed)
+            let message = format!("{}. {}. {}", is_formatted, is_unchanged, is_failed);
+
+            if failed != 0 {
+                failed_summary(&message)
+            } else {
+                success_summary(&message)
+            }
         }
         Mode::Check => {
-            let formatted = format!(
+            let would_be_formatted = format!(
                 "{} {} would be formatted",
                 formatted,
                 file_or_files(formatted)
             )
             .green()
             .to_string();
-            let unchanged = format!(
+            let would_be_unchanged = format!(
                 "{} {} would be left unchanged",
                 unchanged,
                 file_or_files(unchanged)
             );
-            let failed = format!("{} {} would fail to format", failed, file_or_files(failed))
+            let would_fail = format!("{} {} would fail to format", failed, file_or_files(failed))
                 .red()
                 .to_string();
-            format!("{}. {}. {}", formatted, unchanged, failed)
-        }
-    };
+            let message = format!(
+                "{}. {}. {}",
+                would_be_formatted, would_be_unchanged, would_fail
+            );
 
-    if failed != 0 {
-        let msg = format!("\nOh no! 💥 💔 💥\n{}", message).bold().to_string();
-        writeln!(io::stderr(), "{}", msg).ok();
-        Ok(ExitCode::GeneralError)
-    } else {
-        let msg = format!("\nAll done! ✨ 🍰 ✨\n{}", message)
-            .bold()
-            .to_string();
-        writeln!(io::stdout(), "{}", msg).ok();
-        Ok(ExitCode::Success)
+            if failed != 0 || formatted != 0 {
+                failed_summary(&message)
+            } else {
+                success_summary(&message)
+            }
+        }
     }
 }

@@ -35,7 +35,8 @@ fn file_not_found() -> Result<(), Box<dyn Error>> {
     cmd.assert()
         .failure()
         .stderr(predicate::str::contains("File is not found"))
-        .stderr(predicate::str::contains("1 file failed to format"));
+        .stderr(predicate::str::contains("1 file failed to format"))
+        .code(1);
 
     Ok(())
 }
@@ -71,7 +72,8 @@ second line
         .arg("lua");
     cmd.assert()
         .success()
-        .stdout(predicate::str::contains("2 files formatted"));
+        .stdout(predicate::str::contains("2 files formatted"))
+        .code(0);
 
     let content1 = fs::read_to_string(md1)?;
     assert!(content1.contains(r#"return { foo }"#));
@@ -101,12 +103,14 @@ second line
     cmd.arg(input.to_path_buf()).arg("--language").arg("lua");
     cmd.assert()
         .success()
-        .stdout(predicate::str::contains("1 file unchanged"));
+        .stdout(predicate::str::contains("1 file unchanged"))
+        .code(0);
 
     temp_dir.close()?;
     Ok(())
 }
 
+/// Expect the status to be non-zero if any files had errors or were not formatted
 #[test]
 fn check_file() -> Result<(), Box<dyn Error>> {
     let content = r#"""
@@ -133,9 +137,10 @@ second line
         .arg("lua")
         .arg("--check");
     cmd.assert()
-        .success()
+        .failure()
         .stderr(predicate::str::contains("is unformatted"))
-        .stdout(predicate::str::contains("1 file would be formatted"));
+        .stderr(predicate::str::contains("1 file would be formatted"))
+        .code(1);
 
     temp_dir.close()?;
     Ok(())
