@@ -21,9 +21,7 @@ panic = 'abort'
 stylua = { version = "0.14.0" }
 
 # cli
-atty = "0.2.14"
-owo-colors = "3"
-wild = "2.0"
+owo-colors = { version = "3.5.0", features = ["supports-colors"] }
 
 # error
 full_moon = "0.15.1"

@@ -2,10 +2,12 @@
 use std::io::{self, Write};
 use std::process;
 
-use atty::Stream;
 use clap::Parser;
 use miette::{Context, Result};
-use owo_colors::OwoColorize;
+use owo_colors::{
+    OwoColorize,
+    Stream::{Stderr, Stdout},
+};
 
 use gelatyx::{
     cli::{Color, Opts},
@@ -51,10 +53,16 @@ fn run() -> Result<ExitCode> {
 }
 
 fn construct_config(opts: Opts) -> Config {
-    let colored_output = match opts.color {
-        Color::Always => true,
-        Color::Never => false,
-        Color::Auto => atty::is(Stream::Stdout),
+    match opts.color {
+        Color::Always => {
+            owo_colors::set_override(true);
+        }
+        Color::Never => {
+            owo_colors::set_override(false);
+        }
+        Color::Auto => {
+            owo_colors::unset_override();
+        }
     };
     let mode = match opts.check {
         true => Mode::Check,
@@ -63,7 +71,6 @@ fn construct_config(opts: Opts) -> Config {
 
     Config {
         language: opts.language,
-        colored_output,
         mode,
         language_config: opts.language_config,
     }
@@ -94,34 +101,42 @@ fn print_summary(
         }
     };
 
-    let failed_summary = |message: &str| -> Result<ExitCode> {
-        let summary = format!("\nOh no! 💥 💔 💥\n{}", message).bold().to_string();
-        writeln!(io::stderr(), "{}", &summary).ok();
+    let failed_summary = |formatted: &str, unchanged: &str, failed: &str| -> Result<ExitCode> {
+        writeln!(
+            io::stderr(),
+            "\n{}\n{}. {}. {}.",
+            "Oh no! 💥 💔 💥".if_supports_color(Stderr, |text| text.bold()),
+            formatted.if_supports_color(Stderr, |text| text.green()),
+            unchanged,
+            failed.if_supports_color(Stderr, |text| text.red()),
+        )
+        .ok();
+
         Ok(ExitCode::GeneralError)
     };
-    let success_summary = |message: &str| -> Result<ExitCode> {
-        let summary = format!("\nAll done! ✨ 🍰 ✨\n{}", message)
-            .bold()
-            .to_string();
-        writeln!(io::stdout(), "{}", &summary).ok();
+    let success_summary = |formatted: &str, unchanged: &str, failed: &str| -> Result<ExitCode> {
+        writeln!(
+            io::stdout(),
+            "\n{}\n{}. {}. {}.",
+            "All done! ✨ 🍰 ✨".if_supports_color(Stdout, |text| text.bold()),
+            formatted.if_supports_color(Stdout, |text| text.green()),
+            unchanged,
+            failed.if_supports_color(Stdout, |text| text.red()),
+        )
+        .ok();
         Ok(ExitCode::Success)
     };
 
     match mode {
         Mode::Format => {
-            let is_formatted = format!("{} {} formatted", formatted, file_or_files(formatted))
-                .green()
-                .to_string();
+            let is_formatted = format!("{} {} formatted", formatted, file_or_files(formatted));
             let is_unchanged = format!("{} {} unchanged", unchanged, file_or_files(unchanged));
-            let is_failed = format!("{} {} failed to format", failed, file_or_files(failed))
-                .red()
-                .to_string();
-            let message = format!("{}. {}. {}", is_formatted, is_unchanged, is_failed);
+            let is_failed = format!("{} {} failed to format", failed, file_or_files(failed));
 
             if failed != 0 {
-                failed_summary(&message)
+                failed_summary(&is_formatted, &is_unchanged, &is_failed)
             } else {
-                success_summary(&message)
+                success_summary(&is_formatted, &is_unchanged, &is_failed)
             }
         }
         Mode::Check => {
@@ -129,26 +144,18 @@ fn print_summary(
                 "{} {} would be formatted",
                 formatted,
                 file_or_files(formatted)
-            )
-            .green()
-            .to_string();
+            );
             let would_be_unchanged = format!(
                 "{} {} would be left unchanged",
                 unchanged,
                 file_or_files(unchanged)
             );
-            let would_fail = format!("{} {} would fail to format", failed, file_or_files(failed))
-                .red()
-                .to_string();
-            let message = format!(
-                "{}. {}. {}",
-                would_be_formatted, would_be_unchanged, would_fail
-            );
+            let would_fail = format!("{} {} would fail to format", failed, file_or_files(failed));
 
             if failed != 0 || formatted != 0 {
-                failed_summary(&message)
+                failed_summary(&would_be_formatted, &would_be_unchanged, &would_fail)
             } else {
-                success_summary(&message)
+                success_summary(&would_be_formatted, &would_be_unchanged, &would_fail)
             }
         }
     }
