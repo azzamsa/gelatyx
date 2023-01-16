@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.0] - 2023-01-16
+
+### Features
+
+- Accept reading input from a file ([53e34ff](53e34ff2a3d59ce8914495deb42309884a9e7304))
+- Get line and column of error position ([5eca6e8](5eca6e8e0218d0d97c4c73841284d1e3ec6d5bde))
+- Print fancy error message on error ([4adb459](4adb459fc5d0bd3b1a1ce1e9a45b9ad129fd459f))
+- Better error message ([653f170](653f170a0e1bc0293a5ddb91b6efb14070997d90))
+
+### Bug fixes
+
+- Respect user's color choice ([d011f5e](d011f5e0281a365968d2a2cad8bdbce19eef4c5d))
+- Exit code should be non-zero if any files had errors or were not formatted ([00a1bd1](00a1bd1c783c73471db854df42c1dd9fde47acb5))
+- Change the input files as direct argument ([cacfbdc](cacfbdc1d3e0a877f1090c6dce61078e26227d25))
+  - **BREAKING!** ⚠️ : this change the previous argument, where `language` is
+    the direct argument. Now it is the file input. I see this pattern is
+    more common than the previous design.
+- Return error code on formatting failure ([7c82da2](7c82da2517fbb08edd615a772745fbf15118c838))
+- Remove the feature flag ([5d36ac8](5d36ac8706dfed82c75c7d81fc146b66dadc9ad4))
+- Migrate to clap derive API ([65dad31](65dad31781be2cf8d8c6759451c6a4397af414e7))
+- Exit code as enum is more readable than integer ([5f8e74f](5f8e74fe258fdb09e7f9516e11ab857599de0144))
+
 ## [0.1.5] - 2022-07-18
 
 ### Features
