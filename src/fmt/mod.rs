@@ -1,7 +1,6 @@
 pub mod lua;
 
 use std::ffi::OsStr;
-use std::io::{self, Write};
 use std::path::Path;
 use std::{fs, path::PathBuf};
 
@@ -9,13 +8,16 @@ use miette::{NamedSource, SourceOffset};
 use owo_colors::{
     OwoColorize,
     Stream::{Stderr, Stdout},
+    Style,
 };
 
 use crate::{
     cli::Language,
     config::{Config, Mode},
+    epaint,
     fmt::lua::format_lua,
-    Error,
+    output::{stderr, stdout},
+    paint, Error,
 };
 
 /// The status containing the result of desired formatter
@@ -52,6 +54,7 @@ pub fn format_files<P>(config: &Config, filename: P) -> Result<FormatStatus, Err
 where
     P: AsRef<Path> + AsRef<OsStr>,
 {
+    let style = Style::new();
     let mut format_status = FormatStatus::Formatted;
 
     let unformatted_content = fs::read_to_string(&filename).map_err(|_| Error::FileNotFound {
@@ -66,17 +69,10 @@ where
     match config.mode {
         Mode::Format => match format_result {
             FormatResult::Formatted(ref formatted_content) => {
-                writeln!(
-                    io::stdout(),
-                    "{}",
-                    format!(
-                        "{} {}",
-                        "Formatted",
-                        &file_str.if_supports_color(Stdout, |text| text.green()),
-                    )
-                    .if_supports_color(Stdout, |text| text.bold()),
-                )
-                .ok();
+                stdout(&paint!(
+                    &format!("{} {}", "Formatted", paint!(&file_str, style.green())),
+                    style.bold()
+                ));
                 fs::write(file_str, formatted_content)?;
             }
             FormatResult::InvalidSyntax(SyntaxError {
@@ -85,17 +81,10 @@ where
                 message,
                 summary,
             }) => {
-                writeln!(
-                    io::stderr(),
-                    "{}",
-                    format!(
-                        "{} {}",
-                        "Can't format",
-                        &file_str.if_supports_color(Stderr, |text| text.red())
-                    )
-                    .if_supports_color(Stdout, |text| text.bold()),
-                )
-                .ok();
+                stderr(&epaint!(
+                    &format!("{} {}", "Can't Format", epaint!(&file_str, style.red())),
+                    style.bold()
+                ));
 
                 let bad_bit = if let Some(position) = position {
                     let (line, col) = position;
@@ -112,46 +101,29 @@ where
                 format_status = FormatStatus::Failed;
             }
             FormatResult::Unchanged => {
-                writeln!(
-                    io::stdout(),
-                    "{}",
-                    format!(
-                        "{} {}",
-                        "Unchanged",
-                        &file_str.if_supports_color(Stdout, |text| text.green())
-                    )
-                    .if_supports_color(Stdout, |text| text.bold()),
-                )
-                .ok();
+                stdout(&paint!(
+                    &format!("{} {}", "Unchanged", paint!(&file_str, style.green())),
+                    style.bold()
+                ));
                 format_status = FormatStatus::Unchanged;
             }
         },
         Mode::Check => match format_result {
             FormatResult::Formatted(ref _formatted_content) => {
-                writeln!(
-                    io::stderr(),
-                    "{}",
-                    format!(
-                        "{} {}",
-                        &file_str.if_supports_color(Stderr, |text| text.red()),
-                        "is unformatted",
-                    )
-                    .if_supports_color(Stdout, |text| text.bold()),
-                )
-                .ok();
+                // String after `paint` loses its style.
+                // It must be multiple calls to `paint`
+                stderr(&format!(
+                    "{} {}",
+                    epaint!(&file_str, style.red().bold()),
+                    epaint!("is unformatted", style.bold())
+                ));
             }
             FormatResult::Unchanged => {
-                writeln!(
-                    io::stdout(),
-                    "{}",
-                    format!(
-                        "{} {}",
-                        &file_str.if_supports_color(Stdout, |text| text.green()),
-                        "is formatted",
-                    )
-                    .if_supports_color(Stdout, |text| text.bold()),
-                )
-                .ok();
+                stdout(&format!(
+                    "{} {}",
+                    paint!(&file_str, style.green().bold()),
+                    epaint!("is formatted", style.bold())
+                ));
                 format_status = FormatStatus::Unchanged;
             }
             FormatResult::InvalidSyntax(SyntaxError {
@@ -160,17 +132,10 @@ where
                 message,
                 summary,
             }) => {
-                writeln!(
-                    io::stderr(),
-                    "{}",
-                    format!(
-                        "{} {}",
-                        "Can't check",
-                        &file_str.if_supports_color(Stdout, |text| text.red())
-                    )
-                    .if_supports_color(Stdout, |text| text.bold()),
-                )
-                .ok();
+                stderr(&epaint!(
+                    &format!("{} {}", "Can't check", epaint!(&file_str, style.red())),
+                    style.bold()
+                ));
 
                 let bad_bit = if let Some(position) = position {
                     let (line, col) = position;

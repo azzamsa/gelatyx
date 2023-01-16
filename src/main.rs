@@ -1,9 +1,9 @@
 #![deny(unsafe_code)]
-use std::io::{self, Write};
 use std::process;
 
 use clap::Parser;
 use miette::{Context, Result};
+use owo_colors::Style;
 use owo_colors::{
     OwoColorize,
     Stream::{Stderr, Stdout},
@@ -12,8 +12,11 @@ use owo_colors::{
 use gelatyx::{
     cli::{Color, Opts},
     config::{Config, Mode},
+    epaint,
     exit_codes::ExitCode,
     fmt::{self, FormatStatus},
+    output::{stderr, stdout},
+    paint,
 };
 
 fn main() {
@@ -23,7 +26,7 @@ fn main() {
             process::exit(exit_code.into());
         }
         Err(err) => {
-            writeln!(io::stderr(), "Error: {:?}", err).ok();
+            stderr(&format!("Error: {:?}", err));
             process::exit(ExitCode::GeneralError.into());
         }
     }
@@ -43,7 +46,7 @@ fn run() -> Result<ExitCode> {
             }
             Err(e) => {
                 statuses.push(FormatStatus::Failed);
-                writeln!(io::stderr(), "{}: {:?}", &file.display(), e).ok();
+                stderr(&format!("{}: {:?}", &file.display(), e));
             }
         };
     }
@@ -93,6 +96,8 @@ fn print_summary(
     failed: usize,
     mode: Mode,
 ) -> Result<ExitCode> {
+    let style = Style::new();
+
     let file_or_files = |file_count: usize| -> &str {
         if file_count <= 1 {
             "file"
@@ -102,28 +107,23 @@ fn print_summary(
     };
 
     let failed_summary = |formatted: &str, unchanged: &str, failed: &str| -> Result<ExitCode> {
-        writeln!(
-            io::stderr(),
+        stderr(&format!(
             "\n{}\n{}. {}. {}.",
-            "Oh no! 💥 💔 💥".if_supports_color(Stderr, |text| text.bold()),
-            formatted.if_supports_color(Stderr, |text| text.green()),
+            epaint!("Oh no! 💥 💔 💥", style.bold()),
+            epaint!(formatted, style.green()),
             unchanged,
-            failed.if_supports_color(Stderr, |text| text.red()),
-        )
-        .ok();
-
+            epaint!(failed, style.red())
+        ));
         Ok(ExitCode::GeneralError)
     };
     let success_summary = |formatted: &str, unchanged: &str, failed: &str| -> Result<ExitCode> {
-        writeln!(
-            io::stdout(),
+        stdout(&format!(
             "\n{}\n{}. {}. {}.",
-            "All done! ✨ 🍰 ✨".if_supports_color(Stdout, |text| text.bold()),
-            formatted.if_supports_color(Stdout, |text| text.green()),
+            paint!("All done! ✨ 🍰 ✨", style.bold()),
+            paint!(formatted, style.green()),
             unchanged,
-            failed.if_supports_color(Stdout, |text| text.red()),
-        )
-        .ok();
+            paint!(failed, style.red())
+        ));
         Ok(ExitCode::Success)
     };
 

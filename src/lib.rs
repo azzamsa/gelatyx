@@ -1,5 +1,7 @@
 #![deny(unsafe_code)]
 
+pub mod output;
+
 pub mod cli;
 pub mod config;
 pub mod error;
