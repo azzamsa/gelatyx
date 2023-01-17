@@ -21,6 +21,10 @@ Format codebase in documentation.
     <img alt="Sponsor me" src="https://img.shields.io/badge/Sponsor%20Me-%F0%9F%92%96-ff69b4">
   </a>
 
+<p><p/>
+
+![demo](https://user-images.githubusercontent.com/17734314/212819885-463cf1d9-a66a-4195-8d5e-f5fdfda5edcb.gif)
+
 </div>
 
 ---
@@ -39,10 +43,10 @@ Format codebase in documentation.
 ## Usage
 
 ```bash
-$ gelatyx lua --file input.md                                 Format a file with lua formatter
-$ gelatyx lua --file *.md                                     Format multiple files ...
-$ gelatyx lua --file input.md --check                         Check if the docs has been formatted.
-$ gelatyx lua --file input.md --language-config config.toml   Configure the formatter.
+$ gelatyx --language lua input.md                                 Format a file with lua formatter
+$ gelatyx --language lua *.md                                     Format multiple files ...
+$ gelatyx --language lua input.md --check                         Check if the docs has been formatted.
+$ gelatyx --language lua input.md --language-config config.toml   Configure the formatter.
 ```
 
 ## Integration with other formatter
