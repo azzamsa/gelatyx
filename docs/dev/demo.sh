@@ -6,18 +6,14 @@
 # doc1.md: contains invalid unformatted code-block
 # doc2.md: contains valid formatted code-block
 gelatyx --language lua doc.md doc1.md doc2.md --check
-echo $?
 clear
 
 gelatyx --language lua doc.md doc2.md --check
-echo $?
 clear
 
 # contains invalid doc
 gelatyx --language lua doc.md doc1.md
-echo $?
 clear
 
 gelatyx --language lua doc.md doc2.md
-echo $?
 clear

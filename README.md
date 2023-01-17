@@ -23,7 +23,7 @@ Format codebase in documentation.
 
 <p><p/>
 
-![demo](https://user-images.githubusercontent.com/17734314/212819885-463cf1d9-a66a-4195-8d5e-f5fdfda5edcb.gif)
+![demo](https://user-images.githubusercontent.com/17734314/212822384-9223ece5-6e66-4811-8aa0-dbca4e7d3907.gif)
 
 </div>
 
