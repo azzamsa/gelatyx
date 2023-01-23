@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.1] - 2023-01-23
+
+### Bug fixes
+
+- Reword description ([6c0be77](6c0be77f4c6ab2043b4e840268902dbdb466e81e))
+
 ## [0.2.0] - 2023-01-16
 
 ### Features

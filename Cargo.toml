@@ -1,6 +1,6 @@
 [package]
 name = "gelatyx"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["azzamsa <vcs@azzamsa.com>"]
 categories = ["command-line-utilities"]
 edition = "2021"
@@ -29,7 +29,7 @@ miette = { version = "5.5", features = ["fancy"] }
 thiserror = "1.0"
 
 regex = "1.7"
-toml = "0.5.10"
+toml = "0.5.11"
 
 [dependencies.clap]
 version = "4.1.1"
