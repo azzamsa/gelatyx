@@ -8,9 +8,9 @@ use predicates::prelude::*;
 fn help() -> Result<(), Box<dyn Error>> {
     let mut cmd = Command::cargo_bin(crate_name!())?;
     cmd.arg("-h");
-    cmd.assert()
-        .success()
-        .stdout(predicate::str::contains("Format codebease inside the docs"));
+    cmd.assert().success().stdout(predicate::str::contains(
+        "Format code blocks inside the docs",
+    ));
 
     Ok(())
 }

@@ -6,7 +6,7 @@ use clap::{Parser, ValueEnum};
 #[command(
     name = "gelatyx",
     version,
-    about = "Gelatyx 🦤. \nFormat codebease inside the docs",
+    about = "Gelatyx 🦤. \nFormat code blocks inside the docs",
     after_long_help = "Bugs can be reported on GitHub: https://github.com/azzamsa/gelatyx/issues"
 )]
 pub struct Opts {
@@ -17,7 +17,7 @@ pub struct Opts {
     #[arg(long, conflicts_with("file"))]
     pub file_list: Option<PathBuf>,
 
-    /// Language used in code block
+    /// Language used in code blocks
     #[arg(short, long, value_enum)]
     pub language: Language,
 

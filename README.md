@@ -3,7 +3,7 @@
 
 <img src='docs/bird.svg' width=80px />
 
-Format codebase in documentation.
+Format code blocks inside documentation files.
 
 <a href="https://github.com/azzamsa/gelatyx/workflows/ci.yml">
     <img src="https://github.com/azzamsa/gelatyx/workflows/ci/badge.svg" alt="Build status" />
@@ -31,7 +31,7 @@ Format codebase in documentation.
 
 ## Features
 
-- Format language code block inside documentation files.
+- Format language code blocks inside documentation files.
 - Check mode. Ask Gelatyx if the documentation has been formatted.
 - Glob support.
 - Configure the formatter via a configuration file.
