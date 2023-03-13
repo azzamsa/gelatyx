@@ -76,6 +76,7 @@ fn construct_config(opts: Opts) -> Config {
         language: opts.language,
         mode,
         language_config: opts.language_config,
+        is_verbose: opts.verbose,
     }
 }
 
