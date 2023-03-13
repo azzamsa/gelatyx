@@ -16,6 +16,8 @@ pub struct Config {
     pub mode: Mode,
     /// Config file for the formatter
     pub language_config: Option<PathBuf>,
+    /// Vebosity option
+    pub is_verbose: bool,
 }
 
 impl Default for Config {
@@ -24,6 +26,7 @@ impl Default for Config {
             language: Language::Lua,
             mode: Mode::Format,
             language_config: None,
+            is_verbose: false,
         }
     }
 }

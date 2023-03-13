@@ -39,6 +39,10 @@ pub struct Opts {
         long_help,
     )]
     pub color: Color,
+
+    /// Use verbose output
+    #[arg(short, long, default_value_t = false)]
+    pub verbose: bool,
 }
 
 impl Opts {

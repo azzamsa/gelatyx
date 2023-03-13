@@ -101,10 +101,12 @@ where
                 format_status = FormatStatus::Failed;
             }
             FormatResult::Unchanged => {
-                stdout(&paint!(
-                    &format!("{} {}", "Unchanged", paint!(&file_str, style.green())),
-                    style.bold()
-                ));
+                if config.is_verbose {
+                    stdout(&paint!(
+                        &format!("{} {}", "Unchanged", paint!(&file_str, style.green())),
+                        style.bold()
+                    ));
+                }
                 format_status = FormatStatus::Unchanged;
             }
         },
@@ -119,11 +121,13 @@ where
                 ));
             }
             FormatResult::Unchanged => {
-                stdout(&format!(
-                    "{} {}",
-                    paint!(&file_str, style.green().bold()),
-                    epaint!("is formatted", style.bold())
-                ));
+                if config.is_verbose {
+                    stdout(&format!(
+                        "{} {}",
+                        paint!(&file_str, style.green().bold()),
+                        epaint!("is formatted", style.bold())
+                    ));
+                }
                 format_status = FormatStatus::Unchanged;
             }
             FormatResult::InvalidSyntax(SyntaxError {
