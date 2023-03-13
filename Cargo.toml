@@ -1,6 +1,6 @@
 [package]
 name = "gelatyx"
-version = "0.2.1"
+version = "0.3.0"
 authors = ["azzamsa <vcs@azzamsa.com>"]
 categories = ["command-line-utilities"]
 edition = "2021"

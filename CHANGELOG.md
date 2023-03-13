@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0] - 2023-03-13
+
+### Features
+
+- Verbose mode ([50e3713](50e3713a756531aae0d8bec0ca28bfa1eac4818f))
+
 ## [0.2.1] - 2023-01-23
 
 ### Bug fixes
