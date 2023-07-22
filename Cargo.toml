@@ -40,8 +40,6 @@ assert_cmd = "2.0"
 assert_fs = "1.0"
 predicates = "2.1"
 
-cargo-husky = { version = "1", features = ["user-hooks"] }
-
 [package.metadata.binstall]
 pkg-url = "{ repo }/releases/download/v{ version }/{ name }-{ version}-{ target }.tar.gz"
 bin-dir = "{ bin }{ binary-ext }"
