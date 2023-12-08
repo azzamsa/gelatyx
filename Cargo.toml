@@ -8,6 +8,7 @@ exclude = ["/README.md"]
 keywords = ["cli", "formatter"]
 license = "MIT"
 repository = "https://github.com/azzamsa/gelatyx"
+rust-version = "1.73.0"
 description = "Format code blocks inside the docs"
 
 [profile.release]
@@ -18,27 +19,27 @@ panic = 'abort'
 
 [dependencies]
 # formatter
-full_moon = "0.17.0"
-stylua = { version = "0.17.0" }
+full_moon = "0.18.0"
+stylua = { version = "0.18.1" }
 
 # cli
 owo-colors = { version = "3.5.0", features = ["supports-colors"] }
 
 # error
-miette = { version = "5.5", features = ["fancy"] }
+miette = { version = "5.10", features = ["fancy"] }
 thiserror = "1.0"
 
-regex = "1.7"
-toml = "0.7.2"
+regex = "1.9"
+toml = "0.7.6"
 
 [dependencies.clap]
-version = "4.1.8"
+version = "4.4.2"
 features = ["suggestions", "color", "cargo", "derive"]
 
 [dev-dependencies]
 assert_cmd = "2.0"
 assert_fs = "1.0"
-predicates = "2.1"
+predicates = "3.0.3"
 
 [package.metadata.binstall]
 pkg-url = "{ repo }/releases/download/v{ version }/{ name }-{ version}-{ target }.tar.gz"
