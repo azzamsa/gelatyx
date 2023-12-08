@@ -92,7 +92,7 @@ mod tests {
     }
 
     #[test]
-    fn compex() -> Result<(), Error> {
+    fn complex() -> Result<(), Error> {
         let input = r#"
 # Document Title
 

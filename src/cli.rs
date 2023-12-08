@@ -13,7 +13,7 @@ pub struct Opts {
     /// File(s) to format
     pub file: Vec<PathBuf>,
 
-    /// Specify a file containings file(s) to format
+    /// Specify a file containing file(s) to format
     #[arg(long, conflicts_with("file"))]
     pub file_list: Option<PathBuf>,
 

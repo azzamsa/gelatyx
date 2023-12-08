@@ -33,7 +33,7 @@ pub enum FormatResult {
 pub struct SyntaxError {
     /// Contains (line, column) pair of the position of the error
     position: Option<(usize, usize)>,
-    /// Code block where the error occured
+    /// Code block where the error occurred
     code_block: String,
     /// Full error message
     message: String,

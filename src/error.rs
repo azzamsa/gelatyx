@@ -21,7 +21,7 @@ pub enum Error {
     #[diagnostic(
         code(gelatyx::no_config),
         url(docsrs),
-        help("Try creating a config of your choosen formatter.")
+        help("Try creating a config of your chosen formatter.")
     )]
     ConfigNotFound { path: PathBuf },
 
@@ -29,7 +29,7 @@ pub enum Error {
     #[diagnostic(
         code(gelatyx::invalid_config),
         url(docsrs),
-        help("See the configuration example of your choosen formatter.")
+        help("See the configuration example of your chosen formatter.")
     )]
     InvalidConfig { message: String },
 
