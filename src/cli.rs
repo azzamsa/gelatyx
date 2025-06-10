@@ -52,7 +52,7 @@ impl Opts {
                 let content = fs::read_to_string(file_list).unwrap();
                 content.lines().map(PathBuf::from).collect::<Vec<PathBuf>>()
             }
-            None => self.file.to_owned(),
+            None => self.file.clone(),
         };
         Ok(files)
     }
@@ -74,6 +74,7 @@ pub enum Color {
 }
 
 impl Color {
+    #[must_use]
     pub fn as_str(&self) -> &'static str {
         match self {
             Color::Auto => "auto",

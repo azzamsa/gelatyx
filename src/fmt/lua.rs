@@ -18,7 +18,7 @@ pub fn format_lua(content: &str, config: &Config) -> Result<FormatResult, Error>
     )?;
 
     let language_config = match &config.language_config {
-        Some(path) => load_custom_config(path.to_path_buf())?,
+        Some(path) => load_custom_config(path.clone())?,
         None => LuaConfig::default(),
     };
 
@@ -41,7 +41,7 @@ pub fn format_lua(content: &str, config: &Config) -> Result<FormatResult, Error>
     });
 
     if content != new_content {
-        format_result = FormatResult::Formatted(new_content.to_string())
+        format_result = FormatResult::Formatted(new_content.to_string());
     }
 
     Ok(format_result)
@@ -71,7 +71,7 @@ fn parse_error(code_block: &str, error: stylua_lib::Error) -> FormatResult {
         }
         StyluaError::VerificationAstError(_) => {}
         StyluaError::VerificationAstDifference => {}
-    };
+    }
 
     FormatResult::InvalidSyntax(syntax_errors)
 }

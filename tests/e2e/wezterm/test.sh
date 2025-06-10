@@ -12,4 +12,4 @@ find /tmp/wezterm/docs -type f | grep -E '\.(markdown|md)$' > "$tracked_markdown
 cargo run -- --language lua \
   --file-list "$tracked_markdown" \
   --language-config tests/e2e/wezterm/stylua.toml \
-  --check || exit 1
+  --check

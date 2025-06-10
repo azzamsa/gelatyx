@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use miette::{Diagnostic, NamedSource, SourceOffset, SourceSpan};
+use miette::{Diagnostic, NamedSource, SourceSpan};
 use thiserror::Error;
 
 /// all possible errors returned by the app.

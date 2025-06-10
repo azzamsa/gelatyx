@@ -26,7 +26,7 @@ fn main() {
             process::exit(exit_code.into());
         }
         Err(err) => {
-            stderr(&format!("Error: {:?}", err));
+            stderr(&format!("Error: {err:?}"));
             process::exit(ExitCode::GeneralError.into());
         }
     }
@@ -48,7 +48,7 @@ fn run() -> Result<ExitCode> {
                 statuses.push(FormatStatus::Failed);
                 stderr(&format!("{}: {:?}", &file.display(), e));
             }
-        };
+        }
     }
 
     let (formatted, unchanged, failed) = count_status(statuses);
@@ -66,10 +66,11 @@ fn construct_config(opts: Opts) -> Config {
         Color::Auto => {
             owo_colors::unset_override();
         }
-    };
-    let mode = match opts.check {
-        true => Mode::Check,
-        false => Mode::Format,
+    }
+    let mode = if opts.check {
+        Mode::Check
+    } else {
+        Mode::Format
     };
 
     Config {

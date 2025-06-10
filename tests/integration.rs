@@ -76,9 +76,9 @@ second line
         .code(0);
 
     let content1 = fs::read_to_string(md1)?;
-    assert!(content1.contains(r#"return { foo }"#));
+    assert!(content1.contains(r"return { foo }"));
     let content2 = fs::read_to_string(md2)?;
-    assert!(content2.contains(r#"return { foo }"#));
+    assert!(content2.contains(r"return { foo }"));
 
     temp_dir.close()?;
     Ok(())
@@ -180,9 +180,9 @@ return {foo}
         .code(0);
 
     let content1 = fs::read_to_string(md1)?;
-    assert!(content1.contains(r#"return { foo }"#));
+    assert!(content1.contains(r"return { foo }"));
     let content2 = fs::read_to_string(md2)?;
-    assert!(content2.contains(r#"return { foo }"#));
+    assert!(content2.contains(r"return { foo }"));
 
     temp_dir.close()?;
     Ok(())

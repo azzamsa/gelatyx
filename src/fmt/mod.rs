@@ -131,7 +131,7 @@ where
 }
 
 fn parse_invalid_syntax(file_str: String, errors: Vec<SyntaxError>) -> Result<(), Error> {
-    for e in errors {
+    if let Some(e) = errors.into_iter().next() {
         let length = e.position.1.bytes() - e.position.0.bytes();
         let bad_bit = SourceSpan::new(
             SourceOffset::from_location(
