@@ -1,10 +1,10 @@
 use std::{fs, path::PathBuf};
 
-use full_moon::{ast::AstError::UnexpectedToken, Error::AstError};
+use full_moon::{Error::AstError, ast::AstError::UnexpectedToken};
 use regex::{Captures, Regex};
-use stylua_lib::{format_code, Config as LuaConfig, Error::ParseError, OutputVerification};
+use stylua_lib::{Config as LuaConfig, Error::ParseError, OutputVerification, format_code};
 
-use crate::{config::Config, fmt::SyntaxError, Error};
+use crate::{Error, config::Config, fmt::SyntaxError};
 
 use super::FormatResult;
 

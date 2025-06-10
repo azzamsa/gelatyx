@@ -65,7 +65,7 @@ second line
     md2.write_str(content)?;
 
     // Can't use glob here. It doesn't expand automatically
-    // such in termninal invocation.
+    // such in terminal invocation.
     cmd.arg(md1.to_path_buf())
         .arg(md2.to_path_buf())
         .arg("--language")

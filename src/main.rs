@@ -99,13 +99,8 @@ fn print_summary(
 ) -> Result<ExitCode> {
     let style = Style::new();
 
-    let file_or_files = |file_count: usize| -> &str {
-        if file_count <= 1 {
-            "file"
-        } else {
-            "files"
-        }
-    };
+    let file_or_files =
+        |file_count: usize| -> &str { if file_count <= 1 { "file" } else { "files" } };
 
     let failed_summary = |formatted: &str, unchanged: &str, failed: &str| -> Result<ExitCode> {
         stderr(&format!(

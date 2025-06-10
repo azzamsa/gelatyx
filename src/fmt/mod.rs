@@ -12,12 +12,13 @@ use owo_colors::{
 };
 
 use crate::{
+    Error,
     cli::Language,
     config::{Config, Mode},
     epaint,
     fmt::lua::format_lua,
     output::{stderr, stdout},
-    paint, Error,
+    paint,
 };
 
 /// The status containing the result of desired formatter

@@ -3,12 +3,12 @@ name = "gelatyx"
 version = "0.3.0"
 authors = ["azzamsa <vcs@azzamsa.com>"]
 categories = ["command-line-utilities"]
-edition = "2021"
+edition = "2024"
 exclude = ["/README.md"]
 keywords = ["cli", "formatter"]
 license = "MIT"
 repository = "https://github.com/azzamsa/gelatyx"
-rust-version = "1.77.1"
+rust-version = "1.87.0"
 description = "Format code blocks inside the docs"
 
 [profile.release]
