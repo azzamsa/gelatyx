@@ -41,7 +41,7 @@ pub enum Error {
     )]
     InvalidSyntax {
         #[source_code]
-        src: NamedSource,
+        src: NamedSource<String>,
         // Need to supply `SourcetOffset` a source to work
         // Such as `NamedSource`
         #[label("{summary}")]
