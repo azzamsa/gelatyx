@@ -15,7 +15,7 @@ jobs:
     steps:
 
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           # it is a must!
           fetch-depth: 0
@@ -32,7 +32,7 @@ jobs:
           git checkout v${{ env.RELEASE_VERSION }}
 
       - name: Generate a changelog
-        uses: orhun/git-cliff-action@v2
+        uses: orhun/git-cliff-action@v4
         id: git-cliff
         with:
           config: configs/cliff.toml
@@ -61,14 +61,14 @@ jobs:
         include:
           - { build: linux-gnu,  os: ubuntu-22.04, target: x86_64-unknown-linux-gnu    }
           - { build: linux-musl, os: ubuntu-22.04, target: x86_64-unknown-linux-musl   }
-          - { build: win-gnu,    os: windows-2022, target: x86_64-pc-windows-gnu       }
-          - { build: win-msvc,   os: windows-2022, target: x86_64-pc-windows-msvc      }
-          - { build: win32-msvc, os: windows-2022, target: i686-pc-windows-msvc        }
-          - { build: macos,      os: macos-12    , target: x86_64-apple-darwin         }
+          - { build: win-gnu,    os: windows-2025, target: x86_64-pc-windows-gnu       }
+          - { build: win-msvc,   os: windows-2025, target: x86_64-pc-windows-msvc      }
+          - { build: win32-msvc, os: windows-2025, target: i686-pc-windows-msvc        }
+          - { build: macos,      os: macos-15    , target: x86_64-apple-darwin         }
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set the release version
         shell: bash
@@ -83,8 +83,7 @@ jobs:
           sudo apt-get install -y --no-install-recommends \
             --allow-unauthenticated musl-tools
 
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           target: ${{ matrix.target }}
 
