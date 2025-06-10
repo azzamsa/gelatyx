@@ -26,17 +26,17 @@ dev:
 # Format the codebase.
 fmt:
     cargo fmt --all
-    dprint fmt --config configs/dprint.json
+    dprint fmt
 
 # Check is the codebase properly formatted.
 fmt-check:
     cargo fmt --all -- --check
-    dprint check --config configs/dprint.json
+    dprint check
 
 # Lint the codebase.
 lint:
     cargo clippy
-    typos --config configs/typos.toml
+    typos
 
 # Test the codebase.
 test: test-unit
@@ -62,7 +62,7 @@ _doc-check:
 
 # Release hooks
 _release-prepare version:
-    git-cliff --config configs/cliff.toml --output CHANGELOG.md --tag {{ version }}
+    git-cliff --config .cliff.toml --output CHANGELOG.md --tag {{ version }}
     just fmt
 
 # Check dependencies health. Pass `--write` to uppgrade dependencies.
