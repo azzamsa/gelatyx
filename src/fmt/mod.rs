@@ -4,7 +4,9 @@ use std::ffi::OsStr;
 use std::path::Path;
 use std::{fs, path::PathBuf};
 
-use miette::{NamedSource, SourceOffset};
+use full_moon::tokenizer;
+
+use miette::{NamedSource, SourceOffset, SourceSpan};
 use owo_colors::{
     OwoColorize,
     Stream::{Stderr, Stdout},
@@ -28,12 +30,12 @@ pub enum FormatResult {
     Unchanged,
     /// code block , and the error message
     /// (line, column), code block, error
-    InvalidSyntax(SyntaxError),
+    InvalidSyntax(Vec<SyntaxError>),
 }
 
 pub struct SyntaxError {
     /// Contains (line, column) pair of the position of the error
-    position: Option<(usize, usize)>,
+    position: (tokenizer::Position, tokenizer::Position),
     /// Code block where the error occurred
     code_block: String,
     /// Full error message
@@ -76,29 +78,12 @@ where
                 ));
                 fs::write(file_str, formatted_content)?;
             }
-            FormatResult::InvalidSyntax(SyntaxError {
-                position,
-                code_block,
-                message,
-                summary,
-            }) => {
+            FormatResult::InvalidSyntax(errors) => {
                 stderr(&epaint!(
                     &format!("{} {}", "Can't Format", epaint!(&file_str, style.red())),
                     style.bold()
                 ));
-
-                let bad_bit = if let Some(position) = position {
-                    let (line, col) = position;
-                    Some(SourceOffset::from_location(&code_block, line, col))
-                } else {
-                    None
-                };
-                Err(Error::InvalidSyntax {
-                    src: NamedSource::new(file_str, code_block),
-                    bad_bit,
-                    summary,
-                    message,
-                })?;
+                parse_invalid_syntax(file_str, errors)?;
                 format_status = FormatStatus::Failed;
             }
             FormatResult::Unchanged => {
@@ -131,33 +116,37 @@ where
                 }
                 format_status = FormatStatus::Unchanged;
             }
-            FormatResult::InvalidSyntax(SyntaxError {
-                position,
-                code_block,
-                message,
-                summary,
-            }) => {
+            FormatResult::InvalidSyntax(errors) => {
                 stderr(&epaint!(
                     &format!("{} {}", "Can't check", epaint!(&file_str, style.red())),
                     style.bold()
                 ));
-
-                let bad_bit = if let Some(position) = position {
-                    let (line, col) = position;
-                    Some(SourceOffset::from_location(&code_block, line, col))
-                } else {
-                    None
-                };
-                Err(Error::InvalidSyntax {
-                    src: NamedSource::new(file_str, code_block),
-                    bad_bit,
-                    summary,
-                    message,
-                })?;
+                parse_invalid_syntax(file_str, errors)?;
                 format_status = FormatStatus::Failed;
             }
         },
     }
 
     Ok(format_status)
+}
+
+fn parse_invalid_syntax(file_str: String, errors: Vec<SyntaxError>) -> Result<(), Error> {
+    for e in errors {
+        let length = e.position.1.bytes() - e.position.0.bytes();
+        let bad_bit = SourceSpan::new(
+            SourceOffset::from_location(
+                e.code_block.clone(),
+                e.position.0.line(),
+                e.position.0.character(),
+            ),
+            length,
+        );
+        Err(Error::InvalidSyntax {
+            src: NamedSource::new(&file_str, e.code_block),
+            bad_bit,
+            summary: e.summary,
+            message: e.message,
+        })?;
+    }
+    Ok(())
 }

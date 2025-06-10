@@ -1,19 +1,11 @@
 use std::{fs, path::PathBuf};
 
-use full_moon::{Error::AstError, ast::AstError::UnexpectedToken};
 use regex::{Captures, Regex};
-use stylua_lib::{Config as LuaConfig, Error::ParseError, OutputVerification, format_code};
+use stylua_lib::{Config as LuaConfig, Error as StyluaError, OutputVerification, format_code};
 
-use crate::{Error, config::Config, fmt::SyntaxError};
+use crate::{Error, config::Config};
 
-use super::FormatResult;
-
-pub fn load_custom_config(path: PathBuf) -> Result<LuaConfig, Error> {
-    let content = fs::read_to_string(&path).map_err(|_| Error::ConfigNotFound { path })?;
-    toml::from_str(&content).map_err(|e| Error::InvalidConfig {
-        message: e.to_string(),
-    })
-}
+use super::{FormatResult, SyntaxError};
 
 pub fn format_lua(content: &str, config: &Config) -> Result<FormatResult, Error> {
     let mut format_result = FormatResult::Unchanged;
@@ -55,32 +47,33 @@ pub fn format_lua(content: &str, config: &Config) -> Result<FormatResult, Error>
     Ok(format_result)
 }
 
+pub fn load_custom_config(path: PathBuf) -> Result<LuaConfig, Error> {
+    let content = fs::read_to_string(&path).map_err(|_| Error::ConfigNotFound { path })?;
+    toml::from_str(&content).map_err(|e| Error::InvalidConfig {
+        message: e.to_string(),
+    })
+}
+
 fn parse_error(code_block: &str, error: stylua_lib::Error) -> FormatResult {
-    // It has different format than other error library
-    // instead of emitting line and column. It uses two more
-    // detailed position
-    let (position, summary) = match &error {
-        ParseError(AstError(UnexpectedToken { token, additional })) => {
-            let position = (
-                token.start_position().line(),
-                token.end_position().character(),
-            );
-            (Some(position), additional.to_owned())
+    let mut syntax_errors: Vec<SyntaxError> = Vec::new();
+
+    match &error {
+        StyluaError::ParseError(errors) => {
+            for e in errors {
+                let error = SyntaxError {
+                    position: e.range(),
+                    code_block: code_block.to_string(),
+                    message: e.to_string(),
+                    summary: e.error_message().to_string(),
+                };
+                syntax_errors.push(error);
+            }
         }
-        _ => (None, None),
+        StyluaError::VerificationAstError(_) => {}
+        StyluaError::VerificationAstDifference => {}
     };
-    let summary = if let Some(summary) = summary {
-        summary.to_string()
-    } else {
-        "here".to_string()
-    };
-    let syntax_error = SyntaxError {
-        position,
-        code_block: code_block.to_string(),
-        message: error.to_string(),
-        summary,
-    };
-    FormatResult::InvalidSyntax(syntax_error)
+
+    FormatResult::InvalidSyntax(syntax_errors)
 }
 
 #[cfg(test)]

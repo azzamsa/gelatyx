@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use miette::{Diagnostic, NamedSource, SourceOffset};
+use miette::{Diagnostic, NamedSource, SourceOffset, SourceSpan};
 use thiserror::Error;
 
 /// all possible errors returned by the app.
@@ -42,10 +42,8 @@ pub enum Error {
     InvalidSyntax {
         #[source_code]
         src: NamedSource<String>,
-        // Need to supply `SourcetOffset` a source to work
-        // Such as `NamedSource`
         #[label("{summary}")]
-        bad_bit: Option<SourceOffset>,
+        bad_bit: SourceSpan,
         summary: String,
         message: String,
     },
